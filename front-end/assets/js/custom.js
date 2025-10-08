@@ -49,14 +49,22 @@ function paginateResults(containerSelector, pageSize) {
     prev.textContent = "Prev";
     prev.disabled = current === 1;
     prev.className = "btn btn-sm btn-outline-secondary me-2";
-    prev.addEventListener("click", () => { current = Math.max(1, current - 1); render(); });
+    prev.addEventListener("click", () => {
+      current = Math.max(1, current - 1);
+      render();
+    });
     controls.appendChild(prev);
 
     for (let p = 1; p <= pages; p++) {
       const btn = document.createElement("button");
       btn.textContent = p;
-      btn.className = "btn btn-sm me-1 " + (p === current ? "btn-primary" : "btn-outline-secondary");
-      btn.addEventListener("click", () => { current = p; render(); });
+      btn.className =
+        "btn btn-sm me-1 " +
+        (p === current ? "btn-primary" : "btn-outline-secondary");
+      btn.addEventListener("click", () => {
+        current = p;
+        render();
+      });
       controls.appendChild(btn);
     }
 
@@ -64,7 +72,10 @@ function paginateResults(containerSelector, pageSize) {
     next.textContent = "Next";
     next.disabled = current === pages;
     next.className = "btn btn-sm btn-outline-secondary ms-2";
-    next.addEventListener("click", () => { current = Math.min(pages, current + 1); render(); });
+    next.addEventListener("click", () => {
+      current = Math.min(pages, current + 1);
+      render();
+    });
     controls.appendChild(next);
   }
 
@@ -75,8 +86,8 @@ function paginateResults(containerSelector, pageSize) {
 // so this works with the SPA which injects templates after DOMContentLoaded.
 (function watchForResults() {
   function tryInit() {
-    if (document.querySelector('#results')) {
-      paginateResults('#results', 6);
+    if (document.querySelector("#results")) {
+      paginateResults("#results", 6);
       return true;
     }
     return false;
