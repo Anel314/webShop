@@ -3,6 +3,7 @@
   <head>
     <title>HTML5</title>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--BOOTSTRAP-->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
@@ -10,20 +11,42 @@
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
+
     <style>
       html,
       body,
       * {
         font-family: "Arimo", sans-serif !important;
       }
+
+      @media (max-width: 768px) {
+        /* --- Your existing mobile styles for hero, features, etc. --- */
+        .hero {
+          padding: 60px 0;
+        }
+
+        /* ... other mobile styles ... */
+
+        /* --- ADD THIS TO FORCE THE STICKY FOOTER ON MOBILE --- */
+        body {
+          display: flex !important;
+          flex-direction: column !important;
+          min-height: fit-content;
+        }
+
+        main {
+          flex-grow: 1 !important;
+        }
+      }
     </style>
 
     <link rel="stylesheet" href="assets/css/spapp.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
     <link rel="stylesheet" href="assets/css/landing.css" />
+    <link rel="stylesheet" href="assets/css/navbar.css" />
     <link
       rel="shortcut icon"
-      href="./assets/images/favicon.png"
+      href="./assets/images/logo.png"
       type="image/x-icon"
     />
 
@@ -36,24 +59,55 @@
     />
   </head>
 
-  <body style="padding: 0">
-    <nav role="navigation">
+  <body>
+    <!-- <nav role="navigation">
       <ul>
         <li><a href="#view_1">go to view 1</a></li>
         <li><a href="#view_2">go to view 2</a></li>
         <li><a href="#view_3">go to view 3</a></li>
       </ul>
+    </nav> -->
+
+    <nav class="navbar">
+      <a href="#homepage" class="nav-logo">Direct Finds</a>
+
+      <ul class="nav-links">
+        <li><a href="#homepage">Home</a></li>
+        <li><a href="#view_2">Categories</a></li>
+        <li><a href="#">Shops</a></li>
+      </ul>
+
+      <div class="user-actions">
+        <a href="#" class="login-link">Log in</a>
+        <a href="#" class="publish-btn">Create Listing</a>
+      </div>
+
+      <button class="hamburger" id="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </nav>
+    <div class="mobile-nav" id="mobile-nav">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#view_2">Categories</a></li>
+        <li><a href="#">Shops</a></li>
+        <li><a href="#">Create Listing</a></li>
+        <hr style="border: 1px solid #eee; margin: 1rem 0" />
+        <li><a href="#">Log in</a></li>
+        <li><a href="#">Register</a></li>
+      </ul>
+    </div>
 
     <main id="spapp" role="main">
-      <section id="view_2"></section>
-      <section id="view_3"><h1>view 3</h1></section>
-      <section id="error_404"><h1>Page not found</h1></section>
-      <section id="view_1" data-load="view_1.html"></section>
+      <section id="homepage" data-load="homepage.html"></section>
+      <section id="categories" data-load="categories.html"></section>
     </main>
-
-    <footer>
-      <p>© 2025 MyBrand. All rights reserved.</p>
+    <footer class="site-footer">
+      <div class="footer-content">
+        &copy; 2025 Direct Finds. All rights reserved.
+      </div>
     </footer>
 
     <script
@@ -70,5 +124,6 @@
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
+    <script src="./assets/js/navbar.js"></script>
   </body>
 </html>
