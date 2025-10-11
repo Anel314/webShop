@@ -61,26 +61,18 @@
   </head>
 
   <body>
-    <!-- <nav role="navigation">
-      <ul>
-        <li><a href="#view_1">go to view 1</a></li>
-        <li><a href="#view_2">go to view 2</a></li>
-        <li><a href="#view_3">go to view 3</a></li>
-      </ul>
-    </nav> -->
-
     <nav class="navbar">
       <a href="#homepage" class="nav-logo">Direct Finds</a>
 
       <ul class="nav-links">
         <li><a href="#homepage">Home</a></li>
         <li><a href="#categories">Categories</a></li>
-        <li><a href="#">Shops</a></li>
+        <li><a href="#shops">Shops</a></li>
       </ul>
 
       <div class="user-actions">
-        <a href="#" class="login-link">Log in</a>
-        <a href="#" class="publish-btn">Create Listing</a>
+        <a href="#auth" class="login-link">Log in</a>
+        <a href="#listing" class="publish-btn">Create Listing</a>
       </div>
 
       <button class="hamburger" id="hamburger">
@@ -91,19 +83,25 @@
     </nav>
     <div class="mobile-nav" id="mobile-nav">
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#view_2">Categories</a></li>
-        <li><a href="#">Shops</a></li>
-        <li><a href="#">Create Listing</a></li>
+        <li><a href="#homepage">Home</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#shops">Shops</a></li>
+        <li><a href="#listing">Create Listing</a></li>
         <hr style="border: 1px solid #eee; margin: 1rem 0" />
-        <li><a href="#">Log in</a></li>
-        <li><a href="#">Register</a></li>
+        <li><a href="#auth">Log in</a></li>
+        <li><a href="#auth">Register</a></li>
       </ul>
     </div>
 
     <main id="spapp" role="main">
       <section id="homepage" data-load="homepage.html"></section>
       <section id="categories" data-load="categories.html"></section>
+      <section id="shops" data-load="shops.html"></section>
+      <section id="listing" data-load="listing.html"></section>
+      <section id="auth" data-load="auth.html"></section>
+      <section id="error_404" data-load="error_404.html">
+        <h1 align="center" class="mt-4">Page not found</h1>
+      </section>
     </main>
     <footer class="site-footer">
       <div class="footer-content">
@@ -116,8 +114,8 @@
       integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="
       crossorigin="anonymous"
     ></script>
-    <script src="assets/js/jquery.spapp.js"></script>
-    <script src="assets/js/custom.js"></script>
+    <script src="./assets/js/jquery.spapp.js"></script>
+    <script src="./assets/js/custom.js"></script>
 
     <!--BOOTSTRAP-->
     <script

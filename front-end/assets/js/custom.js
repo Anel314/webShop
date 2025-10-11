@@ -5,11 +5,22 @@ $(document).ready(function () {
   var app = $.spapp({ pageNotFound: "error_404" }); // initialize
 
   // define routes
-  app.route({ view: "homepage", load: "homepage.html" });
+  app.route({
+    view: "homepage",
+    load: "homepage.html",
+
+    onReady: () => {
+      console.log("Home loaded");
+      HighlightActiveLink();
+    },
+  });
   app.route({
     view: "categories",
     load: "categories.html",
-    onLoad: () => {
+    onReady: () => {
+      HighlightActiveLink();
+      console.log("categories loaded");
+
       function paginateResults(containerSelector, pageSize) {
         const container = document.querySelector(containerSelector);
         if (!container) return;
@@ -216,12 +227,66 @@ $(document).ready(function () {
       }
     },
   });
+  app.route({
+    view: "product",
+    load: "product.html",
+    onReady: () => {
+      HighlightActiveLink();
+      console.log("product loaded");
+    },
+  });
+  app.route({
+    view: "auth",
+    load: "auth.html",
+    onReady: () => {
+      HighlightActiveLink();
+      console.log("cart loaded");
+    },
+  });
+  app.route({
+    view: "shops",
+    load: "shops.html",
+    onReady: () => {
+      HighlightActiveLink();
+      console.log("shops loaded");
+    },
+  });
+  app.route({
+    view: "listing",
+    load: "listing.html",
+    onReady: () => {
+      HighlightActiveLink();
+      console.log("about loaded");
+    },
+  });
 
   // run app
   app.run();
 });
 
 // Scrolls the browser window to the top
+
+const HighlightActiveLink = () => {
+  const navLinks = document.querySelectorAll(".nav-links a");
+  console.log(navLinks);
+
+  const mobileNavLinks = document.querySelectorAll(".mobile-nav a");
+  const currentHash = window.location.hash || "#homepage";
+  navLinks.forEach((link) => {
+    if (link.getAttribute("href") === currentHash) {
+      link.classList.add("active_link");
+    } else {
+      link.classList.remove("active_link");
+    }
+  });
+  mobileNavLinks.forEach((link) => {
+    if (link.getAttribute("href") === currentHash) {
+      link.classList.add("active_link");
+    } else {
+      link.classList.remove("active_link");
+    }
+  });
+};
 
 /* Client-side pagination for results grid */
 function paginateResults(containerSelector, pageSize) {
