@@ -62,3 +62,7 @@ main#spapp > section {
     font-size: 0.95rem;
   }
 }
+
+main {
+  min-height: 90vh;
+}
