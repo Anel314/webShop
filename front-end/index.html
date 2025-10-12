@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>HTML5</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Direct Finds</title>
     <!--BOOTSTRAP-->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="assets/css/landing.css" />
     <link rel="stylesheet" href="assets/css/navbar.css" />
     <link rel="stylesheet" href="assets/css/auth.css" />
+    <link rel="stylesheet" href="assets/css/shops.css" />
     <link
       rel="shortcut icon"
       href="./assets/images/logo.png"
@@ -85,19 +86,20 @@
         <li><a href="#shops">Shops</a></li>
         <li><a href="#listing">Create Listing</a></li>
         <hr style="border: 1px solid #eee; margin: 1rem 0" />
-        <li><a href="#auth">Log in</a></li>
-        <li><a href="#auth">Register</a></li>
+        <li><a href="#auth">Log in or Register</a></li>
       </ul>
     </div>
 
     <main id="spapp" role="main">
+      <section id="#" data-load="homepage.html"></section>
+
       <section id="homepage" data-load="homepage.html"></section>
       <section id="categories" data-load="categories.html"></section>
       <section id="shops" data-load="shops.html"></section>
       <section id="listing" data-load="listing.html"></section>
       <section id="auth" data-load="auth.html"></section>
       <section id="error_404" data-load="error_404.html">
-        <h1 align="center" class="mt-4">Page not found</h1>
+        <h1 align="center" class="mt-4">To be implemented in next milestone</h1>
       </section>
     </main>
     <footer class="site-footer">
@@ -114,6 +116,7 @@
     <script src="./assets/js/jquery.spapp.js"></script>
     <script src="./assets/js/custom.js"></script>
     <script src="./assets/js/auth.js"></script>
+    <script src="./assets/js/shops.js"></script>
 
     <!--BOOTSTRAP-->
     <script

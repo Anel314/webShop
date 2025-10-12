@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "username": "Greenmarket Ba",
+    "email": "info@greenmarket.ba",
+    "password_hash": "$2b$12$abcd1234efgh5678ijkl9012mnop3456qrst7890uvwx1234yz",
+    "first_name": "Green",
+    "last_name": "Market",
+    "address": "Zmaja od Bosne 12, Sarajevo",
+    "profile_image_url": "https://static.vecteezy.com/system/resources/previews/007/578/826/non_2x/online-shop-logo-happy-shop-logo-design-vector.jpg",
+    "created_at": "2025-01-15T09:23:11",
+    "updated_at": "2025-02-01T14:42:27"
+  },
+  {
+    "id": 2,
+    "username": "Freshcorner Sarajevo",
+    "email": "contact@freshcorner.ba",
+    "password_hash": "$2b$12$ijkl5678mnop9012qrst3456uvwx7890yzabcd1234efgh5678",
+    "first_name": "Fresh",
+    "last_name": "Corner",
+    "address": "Marsala Tita 33, Sarajevo",
+    "profile_image_url": "https://marketplace.canva.com/EAGR4J_-jYM/2/0/1600w/canva-colorful-abstract-online-shop-free-logo-zxo07UzxTDw.jpg",
+    "created_at": "2025-02-03T10:15:48",
+    "updated_at": "2025-02-10T11:05:21"
+  },
+  {
+    "id": 3,
+    "username": "Techstore Bih",
+    "email": "sales@techstore.ba",
+    "password_hash": "$2b$12$mnop9012qrst3456uvwx7890yzabcd1234efgh5678ijkl5678",
+    "first_name": "Tech",
+    "last_name": "Store",
+    "address": "Bulevar Meše Selimovića 45, Sarajevo",
+    "profile_image_url": "https://static.vecteezy.com/system/resources/thumbnails/002/114/691/small_2x/online-shop-logo-template-design-illustration-vector.jpg",
+    "created_at": "2025-03-01T13:24:19",
+    "updated_at": "2025-03-10T10:15:02"
+  },
+  {
+    "id": 4,
+    "username": "Bakery Delight",
+    "email": "hello@bakerydelight.ba",
+    "password_hash": "$2b$12$qrst3456uvwx7890yzabcd1234efgh5678ijkl5678mnop9012",
+    "first_name": "Bakery",
+    "last_name": "Delight",
+    "address": "Ferhadija 12, Sarajevo",
+    "profile_image_url": "https://t4.ftcdn.net/jpg/03/32/31/65/360_F_332316530_ofa4oQA3ZGWxd4tRLDqKuADfy2hnpWuU.jpg",
+    "created_at": "2025-03-12T08:45:12",
+    "updated_at": "2025-03-20T09:11:03"
+  },
+  {
+    "id": 5,
+    "username": "Urbanstyle Shop",
+    "email": "shop@urbanstyle.ba",
+    "password_hash": "$2b$12$uvwx7890yzabcd1234efgh5678ijkl5678mnop9012qrst3456",
+    "first_name": "Urban",
+    "last_name": "Style",
+    "address": "Vilsonovo šetalište 7, Sarajevo",
+    "profile_image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNdE0JlfpFU49j0My-P0yeIZ6kX1Ac7NPBIcK17ES7pOnq1MY9LbiQ2eAayJ9NiufICGI&usqp=CAU",
+    "created_at": "2025-04-01T11:30:21",
+    "updated_at": "2025-04-05T12:00:00"
+  },
+  {
+    "id": 6,
+    "username": "Bookhub Bih",
+    "email": "info@bookhub.ba",
+    "password_hash": "$2b$12$yzabcd1234efgh5678ijkl5678mnop9012qrst3456uvwx7890",
+    "first_name": "Book",
+    "last_name": "Hub",
+    "address": "Radićeva 22, Sarajevo",
+    "profile_image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9oodb2feXxuJEkP-Y0Jo1z171HNVNXxsELXpJ1g-KhXwTbp2-gpvB6amIsjlR1X2XNCo&usqp=CAU",
+    "created_at": "2025-04-10T09:50:14",
+    "updated_at": "2025-04-15T10:00:00"
+  },
+  {
+    "id": 7,
+    "username": "Sportzone Ba",
+    "email": "support@sportzone.ba",
+    "password_hash": "$2b$12$abcd5678efgh9012ijkl3456mnop7890qrst1234uvwx5678yz",
+    "first_name": "Sport",
+    "last_name": "Zone",
+    "address": "Ložionička 16, Sarajevo",
+    "profile_image_url": "https://img.freepik.com/premium-vector/online-store-logo-design-vector-template_809852-489.jpg",
+    "created_at": "2025-05-01T14:30:00",
+    "updated_at": "2025-05-10T15:45:00"
+  },
+  {
+    "id": 8,
+    "username": "Homedecor Bih",
+    "email": "info@homedecor.ba",
+    "password_hash": "$2b$12$efgh9012ijkl3456mnop7890qrst1234uvwx5678yzabcd5678",
+    "first_name": "Home",
+    "last_name": "Decor",
+    "address": "Alipašina 5, Sarajevo",
+    "profile_image_url": "https://img.freepik.com/premium-vector/online-shop-e-commerce-logo_1199645-37307.jpg?semt=ais_hybrid&w=740&q=80",
+    "created_at": "2025-06-02T16:15:33",
+    "updated_at": "2025-06-05T18:00:00"
+  },
+  {
+    "id": 9,
+    "username": "Electroshop Ba",
+    "email": "sales@electroshop.ba",
+    "password_hash": "$2b$12$ijkl3456mnop7890qrst1234uvwx5678yzabcd5678efgh9012",
+    "first_name": "Electro",
+    "last_name": "Shop",
+    "address": "Hamdije Kreševljakovića 10, Sarajevo",
+    "profile_image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZbYDCfWG7Ph2sh2iD2uwLzB5ZV6sBDaRmLUUBjYUrIlyI8fWeYza8HzNrMu_8icZL49k&usqp=CAU",
+    "created_at": "2025-07-12T12:20:00",
+    "updated_at": "2025-07-15T14:10:00"
+  },
+  {
+    "id": 10,
+    "username": "Petworld Bih",
+    "email": "contact@petworld.ba",
+    "password_hash": "$2b$12$mnop7890qrst1234uvwx5678yzabcd5678efgh9012ijkl3456",
+    "first_name": "Pet",
+    "last_name": "World",
+    "address": "Safeta Zajke 21, Sarajevo",
+    "profile_image_url": "https://t3.ftcdn.net/jpg/02/41/39/06/360_F_241390620_hihddCG15N7I8HyPWUiv1eUH85D2SN9z.jpg",
+    "created_at": "2025-08-03T08:45:00",
+    "updated_at": "2025-08-05T10:00:00"
+  }
+]

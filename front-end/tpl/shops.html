@@ -1,0 +1,37 @@
+<section class="page-section" id="shops">
+  <div class="container">
+    <div class="text-center">
+      <h2 class="section-heading text-uppercase">Our Shops</h2>
+      <p class="section-subheading text-muted">
+        Discover our partner shops and find the best deals near you.
+      </p>
+    </div>
+
+    <form id="shop-filter-form" class="mb-5">
+      <div class="row g-2 align-items-end justify-content-center">
+        <div class="col-md-5">
+          <label for="shop-search" class="form-label visually-hidden"
+            >Search</label
+          >
+          <input
+            id="shop-search"
+            name="search"
+            type="search"
+            class="form-control"
+            placeholder="Search by shop name, category, or location..."
+          />
+        </div>
+        <div class="col-md-3">
+          <label for="shop-sort" class="form-label visually-hidden">Sort</label>
+          <select id="shop-sort" name="sort" class="form-select">
+            <option value="null" selected>Sort</option>
+            <option value="name_asc">Name: A to Z</option>
+            <option value="name_desc">Name: Z to A</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <!-- Placeholder shops -->
+    <div id="shopResults" class="row g-4"></div>
+  </div>
+</section>
