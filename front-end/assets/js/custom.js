@@ -473,6 +473,83 @@ $(document).ready(function () {
     onReady: () => {
       HighlightActiveLink();
       console.log("about loaded");
+
+      const form = document.getElementById("productForm");
+      const feedbackMessage = document.getElementById("form-feedback");
+      const formErrorMessage = document.getElementById("form-error");
+
+      // Input fields
+      const nameInput = document.getElementById("name");
+      const priceInput = document.getElementById("price");
+      const stockInput = document.getElementById("stock_quantity");
+      const categoryInput = document.getElementById("category_id");
+      const imagePreview = document.getElementById("image-preview");
+      const productImageInput = document.getElementById("product_image");
+
+      // Error message elements
+      const imageError = document.getElementById("image-error");
+
+      const initialPreviewHTML = imagePreview.innerHTML;
+
+      // --- Image Preview Logic ---
+      imagePreview.addEventListener("click", () => {
+        productImageInput.click();
+      });
+
+      productImageInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            imagePreview.innerHTML = `<img src="${e.target.result}" alt="Product Preview" class="img-fluid d-block mx-auto">`;
+          };
+          reader.readAsDataURL(file);
+          imagePreview.classList.remove("is-invalid");
+          imageError.classList.add("d-none");
+        }
+      });
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Hide previous messages
+        feedbackMessage.classList.add("d-none");
+        formErrorMessage.classList.add("d-none");
+
+        // Reset custom image upload validation
+        imagePreview.classList.remove("is-invalid");
+        imageError.classList.add("d-none");
+
+        let isCustomValid = true;
+
+        // --- Custom Validation for Image ---
+        if (productImageInput.files.length === 0) {
+          imagePreview.classList.add("is-invalid");
+          imageError.classList.remove("d-none");
+          isCustomValid = false;
+        }
+
+        // --- Bootstrap Validation ---
+        if (!form.checkValidity() || !isCustomValid) {
+          formErrorMessage.classList.remove("d-none");
+        } else {
+          feedbackMessage.classList.remove("d-none");
+
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+          console.log("Form data is valid:", data);
+
+          // For this demo, reset the form after a delay
+
+          form.reset();
+          form.classList.remove("was-validated");
+          imagePreview.innerHTML = initialPreviewHTML;
+          feedbackMessage.classList.add("d-none");
+        }
+
+        form.classList.add("was-validated");
+      });
     },
   });
 
