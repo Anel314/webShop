@@ -1,16 +1,4 @@
-<div align="center">
   <h1 align="center">Direct Finds 🛍️</h1>
-  <p align="center">
-    A client-side peer-to-peer marketplace built with HTML, CSS, and vanilla JavaScript.
-    <br />
-    <a href="[your-live-demo-link]"><strong>View Live Demo »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/[your-github-username]/[your-repo-name]/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/[your-github-username]/[your-repo-name]/issues">Request Feature</a>
-  </p>
-</div>
 
 <details>
   <summary>Table of Contents</summary>
