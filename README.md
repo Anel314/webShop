@@ -11,6 +11,12 @@ This project was built from the ground up using fundamental web technologies to 
 
 <br>
 
+## DATABASE SCHEMA
+<p align="center">
+<img width="627" height="662" alt="image" src="https://github.com/user-attachments/assets/2f0e8e19-0ddc-446c-82ef-7060b683406f" /><br>
+</p>
+
+This database schema powers a full-featured e-commerce web application. It allows users to register, manage their profiles, and interact with products through carts and orders. Each product belongs to a category, and users can add items to their cart before completing a purchase. Orders track all necessary details like product quantities, total amount, shipping address, and purchase-time pricing. The schema supports essential e-commerce functionality such as product management, cart operations, and order processing.
 
 ## Features
 
