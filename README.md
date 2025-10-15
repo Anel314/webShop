@@ -55,17 +55,17 @@ You only need a modern web browser and a code editor. For the best experience, u
 
 1.  **Clone the repository**
     ```sh
-    git clone [https://github.com/](https://github.com/)[your-github-username]/[your-repo-name].git
+    git clone https://github.com/Anel314/webShop.git
     ```
 2.  **Navigate to the project directory**
     ```sh
-    cd [your-repo-name]
+    cd webShop
     ```
 3.  **Run the application**
 
     - **Recommended Method (with VS Code Live Server):**
       1.  Open the project folder in VS Code.
-      2.  Right-click on the `index.html` file and select "Open with Live Server".
+      2.  Right-click on the `front-end/index.html` file and select "Open with Live Server".
     - **Alternative Method:**
       Simply open the `index.html` file directly in your web browser.
 
