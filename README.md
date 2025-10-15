@@ -76,3 +76,6 @@ You only need a modern web browser and a code editor. For the best experience, u
       Simply open the `index.html` file directly in your web browser.
 
 <br>
+
+<h2>Notice:</h2>
+<p>All data for shops and products is currently loaded from local .json files just for the sake of displaying what to expect the site to look like, in further milestones this data will be dynamically loaded from the mySQL database.</p>
