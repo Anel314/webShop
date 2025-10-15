@@ -473,6 +473,7 @@ $(document).ready(function () {
     onReady: () => {
       HighlightActiveLink();
       console.log("about loaded");
+      alert("This page will not be accessible if user is not logged in, will be implemented in further milestones");
 
       const form = document.getElementById("productForm");
       const feedbackMessage = document.getElementById("form-feedback");
