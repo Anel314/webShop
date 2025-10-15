@@ -206,6 +206,8 @@ $(document).ready(function () {
               <p class="card-text text-muted small">${escapeHtml(
                 p.description
               )}</p>
+            <button class="shop-button" onclick="alert('To be implemented')">Add to Cart</button>
+
             </div>
           </div>
         `;
