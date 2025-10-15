@@ -34,61 +34,99 @@ $(document).ready(function () {
         let current = 1;
 
         function render() {
-          // hide all
           items.forEach((it, i) => {
             const page = Math.floor(i / pageSize) + 1;
             it.style.display = page === current ? "" : "none";
           });
 
-          // render controls
           let controls = document.getElementById("pagination-controls");
           if (!controls) {
             controls = document.createElement("div");
             controls.id = "pagination-controls";
             controls.style.marginTop = "1rem";
+
             container.parentNode.appendChild(controls);
           }
           controls.innerHTML = "";
 
-          const prev = document.createElement("button");
-          prev.textContent = "Prev";
-          prev.disabled = current === 1;
-          prev.className = "btn btn-sm btn-outline-secondary me-2";
-          prev.addEventListener("click", () => {
-            current = Math.max(1, current - 1);
-            render();
-          });
+          const createButton = (
+            text,
+            pageNum,
+            isDisabled = false,
+            isCurrent = false
+          ) => {
+            const btn = document.createElement("button");
+            btn.textContent = text;
+            btn.disabled = isDisabled;
+
+            let classNames = "btn btn-sm me-1 ";
+            if (isCurrent) {
+              classNames += "btn-primary";
+            } else if (isDisabled) {
+              classNames += "btn-outline-secondary disabled";
+            } else {
+              classNames += "btn-outline-secondary";
+            }
+            btn.className = classNames;
+
+            if (pageNum) {
+              btn.addEventListener("click", () => {
+                current = pageNum;
+                render();
+              });
+            }
+            return btn;
+          };
+
+          const prev = createButton(
+            "Prev",
+            Math.max(1, current - 1),
+            current === 1
+          );
+          prev.classList.add("me-2");
           controls.appendChild(prev);
 
-          for (let p = 1; p <= pages; p++) {
-            const btn = document.createElement("button");
-            btn.textContent = p;
-            btn.className =
-              "btn btn-sm me-1 " +
-              (p === current ? "btn-primary" : "btn-outline-secondary");
-            btn.addEventListener("click", () => {
-              current = p;
-              render();
-            });
-            controls.appendChild(btn);
+          const pagesToShowAround = 3; // Number of pages to show on each side of the current one
+          let startPage = Math.max(1, current - pagesToShowAround);
+          let endPage = Math.min(pages, current + pagesToShowAround);
+
+          if (current - pagesToShowAround < 1) {
+            endPage = Math.min(pages, pagesToShowAround * 2 + 1);
+          }
+          if (current + pagesToShowAround > pages) {
+            startPage = Math.max(1, pages - pagesToShowAround * 2);
           }
 
-          const next = document.createElement("button");
-          next.textContent = "Next";
-          next.disabled = current === pages;
-          next.className = "btn btn-sm btn-outline-secondary ms-2";
-          next.addEventListener("click", () => {
-            current = Math.min(pages, current + 1);
-            render();
-          });
+          if (startPage > 1) {
+            controls.appendChild(createButton(1, 1));
+            if (startPage > 2) {
+              controls.appendChild(createButton("...", null, true));
+            }
+          }
+
+          for (let p = startPage; p <= endPage; p++) {
+            controls.appendChild(createButton(p, p, false, p === current));
+          }
+
+          if (endPage < pages) {
+            if (endPage < pages - 1) {
+              controls.appendChild(createButton("...", null, true));
+            }
+            controls.appendChild(createButton(pages, pages));
+          }
+
+          const next = createButton(
+            "Next",
+            Math.min(pages, current + 1),
+            current === pages
+          );
+          next.classList.add("ms-1");
           controls.appendChild(next);
         }
 
         render();
       }
 
-      // Initialize pagination when #results is present. Use a MutationObserver
-      // so this works with the SPA which injects templates after DOMContentLoaded.
       (function watchForResults() {
         function tryInit() {
           const results = document.querySelector("#itemResults");
@@ -259,13 +297,13 @@ $(document).ready(function () {
         let current = 1;
 
         function render() {
-          // hide all
+          // Hide all shops based on the current page
           shops.forEach((it, i) => {
             const page = Math.floor(i / pageSize) + 1;
             it.style.display = page === current ? "" : "none";
           });
 
-          // render controls
+          // --- Render pagination controls ---
           let controls = document.getElementById("shops-pagination-controls");
           if (!controls) {
             controls = document.createElement("div");
@@ -273,39 +311,89 @@ $(document).ready(function () {
             controls.style.marginTop = "1rem";
             container.parentNode.appendChild(controls);
           }
-          controls.innerHTML = "";
+          controls.innerHTML = ""; // Clear existing controls
 
-          const prev = document.createElement("button");
-          prev.textContent = "Prev";
-          prev.disabled = current === 1;
-          prev.className = "btn btn-sm btn-outline-secondary me-2";
-          prev.addEventListener("click", () => {
-            current = Math.max(1, current - 1);
-            render();
-          });
+          // Helper function to create a button
+          const createButton = (
+            text,
+            pageNum,
+            isDisabled = false,
+            isCurrent = false
+          ) => {
+            const btn = document.createElement("button");
+            btn.textContent = text;
+            btn.disabled = isDisabled;
+
+            let classNames = "btn btn-sm me-1 ";
+            if (isCurrent) {
+              classNames += "btn-primary";
+            } else if (isDisabled) {
+              // A disabled button for "..."
+              classNames += "btn-outline-secondary disabled";
+            } else {
+              classNames += "btn-outline-secondary";
+            }
+            btn.className = classNames;
+
+            if (pageNum) {
+              btn.addEventListener("click", () => {
+                current = pageNum;
+                render();
+              });
+            }
+            return btn;
+          };
+
+          // --- Previous Button ---
+          const prev = createButton(
+            "Prev",
+            Math.max(1, current - 1),
+            current === 1
+          );
+          prev.classList.add("me-2");
           controls.appendChild(prev);
 
-          for (let p = 1; p <= pages; p++) {
-            const btn = document.createElement("button");
-            btn.textContent = p;
-            btn.className =
-              "btn btn-sm me-1 " +
-              (p === current ? "btn-primary" : "btn-outline-secondary");
-            btn.addEventListener("click", () => {
-              current = p;
-              render();
-            });
-            controls.appendChild(btn);
+          // --- Page Number Buttons Logic ---
+          const pagesToShowAround = 3; // Number of pages on each side of the current one
+          let startPage = Math.max(1, current - pagesToShowAround);
+          let endPage = Math.min(pages, current + pagesToShowAround);
+
+          // Adjust the window if it's near the start or end to maintain its size
+          if (current - pagesToShowAround < 1) {
+            endPage = Math.min(pages, pagesToShowAround * 2 + 1);
+          }
+          if (current + pagesToShowAround > pages) {
+            startPage = Math.max(1, pages - pagesToShowAround * 2);
           }
 
-          const next = document.createElement("button");
-          next.textContent = "Next";
-          next.disabled = current === pages;
-          next.className = "btn btn-sm btn-outline-secondary ms-2";
-          next.addEventListener("click", () => {
-            current = Math.min(pages, current + 1);
-            render();
-          });
+          // Add "First" page button and ellipsis (...) if the window is not at the start
+          if (startPage > 1) {
+            controls.appendChild(createButton(1, 1));
+            if (startPage > 2) {
+              controls.appendChild(createButton("...", null, true));
+            }
+          }
+
+          // Render the calculated page window
+          for (let p = startPage; p <= endPage; p++) {
+            controls.appendChild(createButton(p, p, false, p === current));
+          }
+
+          // Add "Last" page button and ellipsis (...) if the window is not at the end
+          if (endPage < pages) {
+            if (endPage < pages - 1) {
+              controls.appendChild(createButton("...", null, true));
+            }
+            controls.appendChild(createButton(pages, pages));
+          }
+
+          // --- Next Button ---
+          const next = createButton(
+            "Next",
+            Math.min(pages, current + 1),
+            current === pages
+          );
+          next.classList.add("ms-1"); // Use ms-1 as per your example, or ms-2 for consistency
           controls.appendChild(next);
         }
 
@@ -473,7 +561,9 @@ $(document).ready(function () {
     onReady: () => {
       HighlightActiveLink();
       console.log("about loaded");
-      alert("This page will not be accessible if user is not logged in, will be implemented in further milestones");
+      alert(
+        "This page will not be accessible if user is not logged in, will be implemented in further milestones"
+      );
 
       const form = document.getElementById("productForm");
       const feedbackMessage = document.getElementById("form-feedback");
