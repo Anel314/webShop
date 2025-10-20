@@ -1,0 +1,76 @@
+<section class="page-section" id="categories">
+  <div class="container">
+    <div class="text-center">
+      <h2 class="section-heading text-uppercase">Products</h2>
+      <p class="section-subheading text-muted">
+        Find items by category, price or keyword.
+      </p>
+    </div>
+
+    <form id="filter-form" class="mb-4">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label for="search" class="form-label visually-hidden">Search</label>
+          <input
+            id="search"
+            name="search"
+            type="search"
+            class="form-control"
+            placeholder="Search items, keywords, locations..."
+          />
+        </div>
+        <div class="col-md-2">
+          <label for="category" class="form-label visually-hidden"
+            >Category</label
+          >
+          <select id="category" name="category" class="form-select">
+            <option value="">All categories</option>
+            <option value="electronics">Electronics</option>
+            <option value="fashion">Fashion</option>
+            <option value="home">Home & Garden</option>
+            <option value="motors">Motors</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="price-min" class="form-label visually-hidden"
+            >Min price</label
+          >
+          <input
+            id="price-min"
+            name="price_min"
+            type="number"
+            min="0"
+            class="form-control"
+            placeholder="Min $"
+          />
+        </div>
+        <div class="col-md-2">
+          <label for="price-max" class="form-label visually-hidden"
+            >Max price</label
+          >
+          <input
+            id="price-max"
+            name="price_max"
+            type="number"
+            min="0"
+            class="form-control"
+            placeholder="Max $"
+          />
+        </div>
+        <div class="col-md-2">
+          <label for="sort" class="form-label visually-hidden">Sort</label>
+          <select id="sort" name="sort" class="form-select">
+            <option value="relevance">Relevance</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
+      </div>
+    </form>
+
+    <div id="itemResults" class="row">
+      <!-- Placeholder items -->
+    </div>
+  </div>
+</section>

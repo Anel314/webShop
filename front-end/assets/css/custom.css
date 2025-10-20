@@ -1,0 +1,68 @@
+/* Minimal custom.css - cleaned and stable */
+/* Reset */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arimo", sans-serif;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+/* Layout */
+main#spapp {
+  display: block;
+}
+main#spapp > section {
+  padding: 60px 10px 10px;
+  min-height: 300px;
+}
+
+/* Footer (regular, non-sticky) */
+.site-footer {
+  width: 100%;
+  background: #222;
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  font-size: 1rem;
+}
+
+.active_link {
+  color: gold !important;
+  text-decoration: underline;
+  font-weight: bold;
+}
+/* Navbar tweaks */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #002f34;
+  text-decoration: none;
+}
+
+/* small responsive */
+@media (max-width: 600px) {
+  main#spapp > section {
+    padding: 40px 12px;
+  }
+  .site-footer {
+    padding: 0.75rem 0;
+    font-size: 0.95rem;
+  }
+}
+
+main {
+  min-height: 90vh;
+}
