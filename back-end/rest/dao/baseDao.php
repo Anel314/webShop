@@ -26,34 +26,45 @@ class BaseDao{
 
         }
     }
-    public function showDatabases(){
-        $stmt = $this->connection->prepare("Show databases;");   
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);     
-        
+   
+    public function getAll(): array {
+        $sql = "SELECT * FROM " . $this->table_name . ";";
+        try {
+            $stmt = $this->connection->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "SQL Error: " . $e->getMessage();
+            return [];
+        }
     }
- public function getAll(): array {
-    $sql = "SELECT * FROM " . $this->table_name . ";";
-    try {
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "SQL Error: " . $e->getMessage();
-        return [];
+    public function add($entity){
+        $query = "INSERT INTO " . $this->table_name . " (";
+        foreach ($entity as $column => $value) {
+            $query .= $column . ', ';
+        }
+        $query = substr($query, 0, -2);
+        $query .= ") VALUES (";
+        foreach ($entity as $column => $value) {
+            $query .= ":" . $column . ', ';
+        }
+        $query = substr($query, 0, -2);
+        $query .= ")";
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute($entity);
+        $entity['id'] = $this->connection->lastInsertId();
+        return $entity;
+    }
+
+  public function delete($id)
+    {
+        $stmt = $this->connection->prepare("DELETE FROM " . $this->table_name . " WHERE id = :id");
+        $stmt->bindValue(':id', $id); 
+        return $stmt->execute();
     }
 
 
-}
 
-
-
-}
-$db = new BaseDao("users");
-foreach ($db->getAll() as $row) {
-    echo "------------------------------------------------------------\n";
-    foreach($row as $key => $value) {
-        echo"". $key .": ". $value ."\n";
-    }
 }
 ?>
