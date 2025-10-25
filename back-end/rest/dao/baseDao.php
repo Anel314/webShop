@@ -26,18 +26,42 @@ class BaseDao{
 
         }
     }
-   
+
+    
+    protected function query($query, $params){
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    protected function query_unique($query, $params){
+        $results = $this->query($query, $params);
+        return reset($results);
+    }
+
+
     public function getAll(): array {
         $sql = "SELECT * FROM " . $this->table_name . ";";
         try {
             $stmt = $this->connection->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetchAll();
         } catch (PDOException $e) {
             echo "SQL Error: " . $e->getMessage();
             return [];
         }
     }
+    
+
+    public function getById($id){
+        $stmt = $this->connection->prepare("SELECT * FROM " . $this->table_name . " WHERE id = :id");
+        $stmt->bindValue(':id', $id); 
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+
     public function add($entity){
         $query = "INSERT INTO " . $this->table_name . " (";
         foreach ($entity as $column => $value) {
@@ -57,14 +81,43 @@ class BaseDao{
         return $entity;
     }
 
-  public function delete($id)
-    {
+
+    public function delete($id){
         $stmt = $this->connection->prepare("DELETE FROM " . $this->table_name . " WHERE id = :id");
         $stmt->bindValue(':id', $id); 
         return $stmt->execute();
     }
 
 
-
+    public function update($entity, $id, $id_column = "id"){
+        $query = "UPDATE " . $this->table_name . " SET ";
+        foreach ($entity as $column => $value) {
+            $query .= $column . "=:" . $column . ", ";
+        }
+        $query = substr($query, 0, -2);
+        $query .= " WHERE " . $id_column . " = :id";
+        $stmt = $this->connection->prepare($query);
+        $entity['id'] = $id;
+        $stmt->execute($entity);
+        return $entity;
+    }
 }
+
+
+$db = new BaseDao("users");
+echo "All users:\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ?>
