@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__."./baseService.php";
 require_once __DIR__."/../dao/usersDao.php";
-class UserService extends BaseService{
+class UsersService extends BaseService{
     public function __construct(){
         parent::__construct(new UsersDao());
     }

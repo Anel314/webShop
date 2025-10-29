@@ -4,7 +4,7 @@ require_once __DIR__ . "/./baseService.php";
 require_once __DIR__ ."/../dao/cartDao.php";
 require_once __DIR__ ."/../dao/productService.php";
 
-class CartService extends BaseService{
+class OrderService extends BaseService{
     public function __construct(){
         parent::__construct(new OrdersDao());
         
