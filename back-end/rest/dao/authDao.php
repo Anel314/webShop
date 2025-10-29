@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ ."/baseDao.php";
 
-class authDao extends BaseDao {
+class AuthDao extends BaseDao {
     public function __construct() {
         parent::__construct("users");
         
@@ -16,12 +16,23 @@ class authDao extends BaseDao {
         $params = [':email' => $email];
         return $this->query_unique($query, $params);
     }   
-}
 
-$db = new authDao();
-echo "User with email 'jdoe@example.com':\n";
-$user = $db->get_user_by_email('jdoe@example.com');
-print_r($user); 
+    public function check_login($data) {
+        $user = $this->get_user_by_username($data['username']);
+        if (!$user) {
+            $user = $this->get_user_by_email($data["email"]); 
+        }
+        if (!$user) {
+            return false;
+        }
+        if($user["password"] == md5(md5($data["password"]))) {
+            return true;
+        }
+
+        return false;
+    }
+
+}
 
 
 ?>

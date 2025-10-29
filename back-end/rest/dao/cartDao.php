@@ -18,6 +18,10 @@ class CartDao extends BaseDao{
         $result = $this->query_unique($query, $params);
         return $result['total_price'] ?? 0;
     }
+    
+    
+
+
 }
 
 ?>

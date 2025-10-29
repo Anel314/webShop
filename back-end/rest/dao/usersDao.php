@@ -22,6 +22,10 @@ class UsersDao extends BaseDao{
         return $this->query_unique($query, $params);
     }
 
+    public function add_user($entity){
+        $entity["password"] = md5($entity["password"]);
+        $this->add($entity);
+    }
     
 
 

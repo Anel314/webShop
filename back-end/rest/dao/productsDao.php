@@ -16,12 +16,14 @@ class ProductsDao extends BaseDao {
         $params = [':category' => $category];
         return $this->query($query, $params);
     }
+    public function decrease_quantity($product_id, $quantity) {
+        $query = "UPDATE products SET stock_quantity = stock_quantity - :quantity WHERE id = :product_id";
+        $params = [':product_id' => $product_id, ':quantity' => $quantity];
+        $stmt = $this->connection->prepare($query);
+        return $stmt->execute($params);
+    }
+        
     
 }
-
-$db = new ProductsDao();
-echo "Products in Electronics category:\n";
-$products = $db->get_products_by_category('Electronics');
-print_r($products);
 
 ?>

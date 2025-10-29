@@ -18,7 +18,6 @@ class BaseDao{
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
                     ]
                 );
-                echo "Connection Established\n";
             }
         catch(PDOException $e){
             $this->connection = null;
@@ -102,22 +101,6 @@ class BaseDao{
         return $entity;
     }
 }
-
-
-$db = new BaseDao("users");
-echo "All users:\n";
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ?>
