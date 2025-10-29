@@ -79,3 +79,16 @@ You only need a modern web browser and a code editor. For the best experience, u
 
 <h2>Notice:</h2>
 <p>All data for shops and products is currently loaded from local .json files just for the sake of displaying what to expect the site to look like, in further milestones this data will be dynamically loaded from the mySQL database.</p>
+
+---
+### MILESTONE 2
+
+Inside the back-end folder you can find all the necessities for milestone2. <br>
+Inside the database folder (back-end/rest/database) are 2 .sql files, the file names "webShopDump.sql" is the actual database that i dumped from DBeaver, but in case that file does not work for you i have created another file named 
+"inCaseDumpDoesNotWorkForYou.sql" that contains all the sql statements that i used to create my database. On my machine the database contains some dummydata that i used to test my dao layer on. If you need that as well i can provide that.
+
+<h2>Notice</h2>
+<p>I forgot that milestone2 was only for the dao layer so i kept working on the other layers too as you will notice in this version of the app. I have already implemented some Services and started the Routes i hope that does not make any trouble. I did structure the project in a way to let anybody know "where what is". So i hope you are able to find everything needed in here. Good luck grading!</p>
+
+---
+
