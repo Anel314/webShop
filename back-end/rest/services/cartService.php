@@ -32,7 +32,6 @@ class CartService extends BaseService
             $newQuantity = $existingItem['quantity'] + $quantity;
             return $this->dao->update_cart_item($user_id, $product_id, $newQuantity);
         } else {
-            // Add new item
             return $this->dao->add_cart_item([
                 'user_id' => $user_id,
                 'product_id' => $product_id,
