@@ -10,6 +10,16 @@ class UsersService extends BaseService
 
     public function add_user($entity)
     {
+        try {
+            if (!$entity["username"] || !$entity["email"] || !$entity["password"]) {
+                throw new Exception("Username, email, and password are required.");
+            }
+        } catch (Exception $e) {
+            throw new Exception("Username, email, and password are required.");
+        }
+
+
+
         if ($this->get_user_by_email($entity["email"])) {
             throw new Exception("Email already exists.");
         }
@@ -20,12 +30,12 @@ class UsersService extends BaseService
         }
 
 
-        if ($this->get_user_by_name($entity["name"])) {
+        if ($this->get_user_by_name($entity["username"])) {
             throw new Exception("Username already exists.");
         }
 
-        $entity["password"] = md5($entity["password"]);
-
+        $entity["password_hash"] = md5($entity["password"]);
+        unset($entity["password"]);
         return $this->dao->add($entity);
     }
 

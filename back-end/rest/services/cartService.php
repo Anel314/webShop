@@ -45,14 +45,13 @@ class CartService extends BaseService
         return $this->dao->delete_cart_item($user_id, $product_id);
     }
 
-    public function update_item_quantity(int $user_id, int $product_id, int $quantity): array
+    public function update_item_quantity($data): array
     {
-        if ($quantity <= 0) {
-            $this->remove_item($user_id, $product_id);
+        if ($data["quantity"] <= 0) {
+            $this->remove_item($data["user_id"], $data["product_id"]);
             return [];
         }
-
-        return $this->dao->update_cart_item($user_id, $product_id, $quantity);
+        return $this->dao->update_cart_item($data);
     }
 
     public function clear_cart(int $user_id): bool

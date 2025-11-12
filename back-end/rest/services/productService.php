@@ -25,7 +25,7 @@ class ProductService extends BaseService
             throw new Exception("Product not found.");
         }
 
-        if ($product['quantity'] < $quantity) {
+        if ($product['stock_quantity'] < $quantity) {
             throw new Exception("Insufficient stock.");
         }
 

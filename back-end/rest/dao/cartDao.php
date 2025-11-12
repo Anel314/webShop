@@ -10,8 +10,10 @@ class CartDao extends BaseDao
 
     public function get_all_items($user_id)
     {
-        $query = "SELECT * FROM cart JOIN products ON products.id = cart.product_id WHERE cart.user_id = :user_id";
+
+        $query = "SELECT cart.id AS cart_id, cart.user_id AS cart_user_id, cart.product_id, cart.quantity, cart.created_at AS cart_created_at, products.id AS product_id_col, products.name, products.description, products.price, products.stock_quantity, products.category_id, products.created_at AS product_created_at, products.updated_at, products.user_id AS product_owner_id FROM cart JOIN products ON products.id = cart.product_id WHERE cart.user_id = :user_id;";
         $params = [':user_id' => $user_id];
+        // print_r($user_id);
         return $this->query($query, $params);
     }
 
@@ -40,9 +42,12 @@ class CartDao extends BaseDao
     }
 
     // Update a cart item by its cart id
-    public function update_cart_item($cart_item_id, $entity)
+    public function update_cart_item($entity)
     {
-        return $this->update($entity, $cart_item_id, 'id');
+        $params = [":user_id" => $entity["user_id"], ":product_id" => $entity["product_id"]];
+
+        $cart_id = $this->query_unique("SELECT id FROM cart WHERE user_id=:user_id AND product_id = :product_id", $params)["id"];
+        return $this->update($entity, $cart_id, 'id');
     }
 
 

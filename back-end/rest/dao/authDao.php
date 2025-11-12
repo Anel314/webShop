@@ -14,10 +14,10 @@ class AuthDao extends BaseDao
         $params = [':username' => $username];
         return $this->query_unique($query, $params);
     }
-    public function get_user_by_email($email)
+    public function get_user_by_identifier($identifier)
     {
-        $query = "SELECT * FROM users WHERE email = :email";
-        $params = [':email' => $email];
+        $query = "SELECT * FROM users WHERE email = :id OR username = :id";
+        $params = [':id' => $identifier];
         return $this->query_unique($query, $params);
     }
 

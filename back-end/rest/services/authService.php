@@ -44,7 +44,7 @@ class AuthService extends BaseService
             throw new Exception("User not found.");
         }
 
-        if ($user['password'] !== md5($data['password'])) {
+        if ($user['password_hash'] !== md5($data['password'])) {
             throw new Exception("Incorrect password.");
         }
 
@@ -54,7 +54,6 @@ class AuthService extends BaseService
 
 
 }
-
 
 
 

@@ -6,6 +6,7 @@ require_once "./rest/services/cartService.php";
 require_once "./rest/services/orderService.php";
 require_once "./rest/services/productService.php";
 require_once "./rest/services/usersService.php";
+require_once "./rest/services/orderProductsService.php";
 
 
 Flight::register('auth', "AuthService");
@@ -13,6 +14,7 @@ Flight::register('cart', "CartService");
 Flight::register('order', "OrderService");
 Flight::register('product', "ProductService");
 Flight::register('users', "UsersService");
+Flight::register('orderProducts', "OrderProductsService");
 
 Flight::route("/*", function () {
     echo "<h1>Welcome to the Web Shop API</h1>";
