@@ -2,13 +2,15 @@
 require_once __DIR__ . "/../config.php";
 
 
-class BaseDao{
+class BaseDao
+{
     protected $connection;
     private $table_name;
 
-    public function __construct($table_name){
+    public function __construct($table_name)
+    {
         $this->table_name = $table_name;
-        try{
+        try {
             $this->connection = new PDO(
                 "mysql:host=" . Config::DB_HOST() . ";dbname=" . Config::DB_NAME() . ";port=" . Config::DB_PORT(),
                 Config::DB_USER(),
@@ -16,31 +18,33 @@ class BaseDao{
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                    ]
-                );
-            }
-        catch(PDOException $e){
+                ]
+            );
+        } catch (PDOException $e) {
             $this->connection = null;
-            throw new Exception("". $e->getMessage());
+            throw new Exception("" . $e->getMessage());
 
         }
     }
 
-    
-    protected function query($query, $params){
+
+    protected function query($query, $params)
+    {
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
-    protected function query_unique($query, $params){
+    protected function query_unique($query, $params)
+    {
         $results = $this->query($query, $params);
         return reset($results);
     }
 
 
-    public function getAll(): array {
+    public function getAll(): array
+    {
         $sql = "SELECT * FROM " . $this->table_name . ";";
         try {
             $stmt = $this->connection->prepare($sql);
@@ -51,17 +55,19 @@ class BaseDao{
             return [];
         }
     }
-    
 
-    public function getById($id){
+
+    public function getById($id)
+    {
         $stmt = $this->connection->prepare("SELECT * FROM " . $this->table_name . " WHERE id = :id");
-        $stmt->bindValue(':id', $id); 
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
         return $stmt->fetch();
     }
 
 
-    public function add($entity){
+    public function add($entity)
+    {
         $query = "INSERT INTO " . $this->table_name . " (";
         foreach ($entity as $column => $value) {
             $query .= $column . ', ';
@@ -81,23 +87,28 @@ class BaseDao{
     }
 
 
-    public function delete($id){
+    public function delete($id)
+    {
         $stmt = $this->connection->prepare("DELETE FROM " . $this->table_name . " WHERE id = :id");
-        $stmt->bindValue(':id', $id); 
+        $stmt->bindValue(':id', $id);
         return $stmt->execute();
     }
 
 
-    public function update($entity, $id, $id_column = "id"){
+    public function update($entity, $id, $id_column = "id")
+    {
         $query = "UPDATE " . $this->table_name . " SET ";
         foreach ($entity as $column => $value) {
-            $query .= $column . "=:" . $column . ", ";
+            $query .= $column . "=:" . $column . " , ";
         }
         $query = substr($query, 0, -2);
-        $query .= " WHERE " . $id_column . " = :id";
+        $query .= " WHERE " . $id_column . " = :id;";
+
         $stmt = $this->connection->prepare($query);
-        $entity['id'] = $id;
-        $stmt->execute($entity);
+        $stmt->bindValue(":id", $id);
+
+
+        $stmt->execute(array_merge($entity, [":id" => $id]));
         return $entity;
     }
 }

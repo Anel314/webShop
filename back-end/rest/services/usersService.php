@@ -1,36 +1,66 @@
 <?php
-require_once __DIR__."./baseService.php";
-require_once __DIR__."/../dao/usersDao.php";
-class UsersService extends BaseService{
-    public function __construct(){
+require_once __DIR__ . "/baseService.php";
+require_once __DIR__ . "/../dao/usersDao.php";
+class UsersService extends BaseService
+{
+    public function __construct()
+    {
         parent::__construct(new UsersDao());
     }
 
-    public function add($entity) {
-        $email_exists = $this->dao->get_user_by_email($entity['email']);
-        $username_exists = $this->dao->get_user_by_name($entity['username']);
-        if ($email_exists || $username_exists) {
-            return [];
+    public function add_user($entity)
+    {
+        try {
+            if (!$entity["username"] || !$entity["email"] || !$entity["password"]) {
+                throw new Exception("Username, email, and password are required.");
+            }
+        } catch (Exception $e) {
+            throw new Exception("Username, email, and password are required.");
         }
-        return parent::add($entity);
-    }
 
-    public function getAll(){
-        return $this->dao->getAll();
-    }
-    public function update($entity, $id, $id_column = "id") {
-        $email_exists = $this->dao->get_user_by_email($entity['email']);
-        if(!$email_exists){
-            return [];
+
+
+        if ($this->get_user_by_email($entity["email"])) {
+            throw new Exception("Email already exists.");
         }
-        return parent::update($entity,$id, $id_column='id');
+
+
+        if (strlen($entity["password"]) < 6) {
+            throw new Exception("Password must be at least 6 characters.");
+        }
+
+
+        if ($this->get_user_by_name($entity["username"])) {
+            throw new Exception("Username already exists.");
+        }
+
+        $entity["password_hash"] = md5($entity["password"]);
+        unset($entity["password"]);
+        return $this->dao->add($entity);
+    }
+
+    public function get_user_by_email($email)
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Invalid email format.");
+        }
+        return $this->dao->get_user_by_email($email);
     }
 
 
+    public function get_user_by_name($name)
+    {
+        if (strlen($name) < 3) {
+            throw new Exception("Username must be at least 3 characters.");
+        }
+        return $this->dao->get_user_by_name($name);
+    }
+    public function get_user_by_id($id)
+    {
+        return $this->dao->get_user_by_id($id);
+    }
 
 }
-
-
 
 
 

@@ -1,35 +1,59 @@
 <?php
-require_once __DIR__."./baseService.php";
-require_once __DIR__."/../dao/authDao.php";
-class AuthService extends BaseService{
-    public function __construct(){
+require_once __DIR__ . "/baseService.php";
+require_once __DIR__ . "/../dao/authDao.php";
+class AuthService extends BaseService
+{
+    public function __construct()
+    {
         parent::__construct(new AuthDao());
     }
 
-    public function add($entity) {
-        $email_exists = $this->dao->get_user_by_email($entity['email']);
-        $username_exists = $this->dao->get_user_by_name($entity['username']);
-        if ($email_exists || $username_exists) {
-            return [];
+    public function get_user_by_username($username)
+    {
+        if (empty($username)) {
+            throw new Exception("Username is required.");
+        } else if (strlen($username) < 3) {
+            throw new Exception("Username must be at least 3 characters long.");
         }
-        return parent::add($entity);
+
+        $username = trim(strtolower($username));
+        return $this->dao->get_user_by_username($username);
+    }
+    public function get_user_by_email($email)
+    {
+
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Invalid email format.");
+        }
+
+        $email = strtolower($email);
+        return $this->dao->get_user_by_email($email);
     }
 
-    public function getAll(){
-        return $this->dao->getAll();
-    }
-    public function update($entity, $id, $id_column = "id") {
-        $email_exists = $this->dao->get_user_by_email($entity['email']);
-        if(!$email_exists){
-            return [];
-        }
-        return parent::update($entity,$id, $id_column='id');
-    }
+    public function check_login($data)
+    {
 
+        if (empty($data['identifier']) || empty($data['password'])) {
+            throw new Exception("Username/email and password are required.");
+        }
+
+        $identifier = strtolower(trim($data['identifier']));
+        $user = $this->dao->get_user_by_identifier($identifier);
+
+        if (!$user) {
+            throw new Exception("User not found.");
+        }
+
+        if ($user['password_hash'] !== md5($data['password'])) {
+            throw new Exception("Incorrect password.");
+        }
+
+        return $user;
+
+    }
 
 
 }
-
 
 
 
