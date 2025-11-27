@@ -21,6 +21,11 @@ class AuthDao extends BaseDao
         return $this->query_unique($query, $params);
     }
 
+    public function register($entity)
+    {
+        return $this->add($entity);
+    }
+
     public function check_login($identifier)
     {
         $query = "SELECT * FROM users WHERE username = :id OR email = :id";

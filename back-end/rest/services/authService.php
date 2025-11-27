@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . "/baseService.php";
 require_once __DIR__ . "/../dao/authDao.php";
+require __DIR__ . '/../../vendor/autoload.php';
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 class AuthService extends BaseService
 {
     public function __construct()
@@ -48,13 +52,68 @@ class AuthService extends BaseService
             throw new Exception("Incorrect password.");
         }
 
-        return $user;
+
+        $jwt_payload = [
+            'user' => $user,
+            'iat' => time(),
+            // If this parameter is not set, JWT will be valid for life. This is not a good approach
+            'exp' => time() + (60 * 60 * 24) // valid for day
+        ];
+
+
+        $token = JWT::encode(
+            $jwt_payload,
+            Config::JWT_SECRET(),
+            'HS256'
+        );
+
+
+        return ['success' => true, 'data' => array_merge($user, ['token' => $token])];
 
     }
 
 
-}
+    public function register($data)
+    {
+        if (empty($data['username']) || strlen($data['username']) < 3) {
+            throw new Exception("Username must be at least 3 characters long.");
+        }
+        if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Invalid email format.");
+        }
+        if (empty($data['password']) || strlen($data['password']) < 6) {
+            throw new Exception("Password must be at least 6 characters long.");
+        }
+        if (empty($data['first_name']) || strlen($data['first_name']) < 3) {
+            throw new Exception("Name must be at least 3 characters long.");
+        }
+        if (empty($data['last_name']) || !filter_var($data['last_name'])) {
+            throw new Exception("Last name must be at least 3 characters long.");
+        }
+        if (empty($data['address']) || strlen($data['address']) < 6) {
+            throw new Exception("Must provide a valid address.");
+        }
 
+        $data['email'] = strtolower($data['email']);
+        $data['password_hash'] = md5($data['password']);
+        $user_password = $data['password'];
+        unset($data['password']);
+
+        $newUser = $this->dao->register($data);
+        $newUser["identifier"] = $data['username'];
+        $newUser["password"] = $user_password;
+        return $this->check_login($newUser);
+
+
+
+
+
+
+
+
+    }
+
+}
 
 
 

@@ -63,8 +63,8 @@ class UsersService extends BaseService
 }
 
 
-
-
+// $test = new UsersService();
+// print_r($test->getAll());
 
 
 ?>

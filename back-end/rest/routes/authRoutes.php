@@ -172,4 +172,67 @@ Flight::route('POST /login', function () {
     }
 });
 
+
+
+// Register user
+/**
+ * @OA\Post(
+ *     path="/register",
+ *     summary="Register a new user account",
+ *     tags={"Authentication"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"username", "email", "password", "first_name", "last_name", "address", "profile_image_url"},
+ *             @OA\Property(property="username", type="string", example="johndoe"),
+ *             @OA\Property(property="email", type="string", format="email", example="johndoe@example.com"),
+ *             @OA\Property(property="password", type="string", format="password", example="mySecurePass123"),
+ *             @OA\Property(property="first_name", type="string", example="John"),
+ *             @OA\Property(property="last_name", type="string", example="Doe"),
+ *             @OA\Property(property="address", type="string", example="123 Main Street, NY"),
+ *             @OA\Property(property="profile_image_url", type="string", example="https://example.com/images/profile.jpg")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Registration successful",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             example={
+ *                 "message": "Registration successful",
+ *                 "user": {
+ *                     "id": 123,
+ *                     "username": "johndoe",
+ *                     "email": "johndoe@example.com",
+ *                     "first_name": "John",
+ *                     "last_name": "Doe",
+ *                     "address": "123 Main Street, NY",
+ *                     "profile_image_url": "https://example.com/images/profile.jpg"
+ *                 }
+ *             }
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Invalid or missing registration data",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             example={"error": "Missing required fields or invalid data"}
+ *         )
+ *     )
+ * )
+ */
+
+Flight::route('POST /register', function () {
+    $data = Flight::request()->data->getData();
+
+    try {
+        $user = Flight::auth()->register($data);
+        Flight::json(["message" => "Registration successful", "user" => $user]);
+    } catch (Exception $e) {
+        Flight::json(["error" => $e->getMessage()], 400);
+    }
+});
+
+
 ?>
