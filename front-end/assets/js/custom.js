@@ -1,3 +1,4 @@
+let SERVER = "http://localhost/webShop/back-end";
 $(document).ready(function () {
   // Don't force section heights with JS. Let CSS handle sizing so the
   // footer sits after the content and doesn't overlap.
@@ -157,9 +158,12 @@ $(document).ready(function () {
         if (!results) return;
 
         try {
-          const resp = await fetch("assets/jsons/products.json", {
+          console.log("DOEING SINETHIGN");
+
+          const resp = await fetch(SERVER + "/products", {
             cache: "no-cache",
           });
+
           if (!resp.ok) throw new Error("Failed to load products.json");
           const products = await resp.json();
 
@@ -192,25 +196,26 @@ $(document).ready(function () {
               const col = document.createElement("div");
               col.className = "col-md-4 mb-4 product-item";
               col.innerHTML = `
-          <div class="card">
-            <img src="${escapeHtml(
-              p.image
-            )}" class="card-img-top" alt="${escapeHtml(
-                p.title
-              )}" onerror="this.src='assets/images/logo.png'" />
-            <div class="card-body">
-              <h5 class="card-title">${escapeHtml(p.title)}</h5>
-              <p class="card-text">${escapeHtml(p.location)} — $${Number(
-                p.price
-              ).toFixed(2)}</p>
-              <p class="card-text text-muted small">${escapeHtml(
-                p.description
-              )}</p>
-            <button class="shop-button" onclick="alert('To be implemented')">Add to Cart</button>
+            <div class="card">
+              <img src="assets/images/logo.png"
+                  class="card-img-top"
+                  alt="${escapeHtml(p.name)}" />
 
+              <div class="card-body">
+                <h5 class="card-title">${escapeHtml(p.name)}</h5>
+
+                <p class="card-text">$${Number(p.price).toFixed(2)}</p>
+
+                <p class="card-text text-muted small">
+                  ${escapeHtml(p.description)}
+                </p>
+
+                <button class="shop-button" onclick="alert('To be implemented')">
+                  Add to Cart
+                </button>
+              </div>
             </div>
-          </div>
-        `;
+          `;
               results.appendChild(col);
             });
           }
@@ -285,6 +290,7 @@ $(document).ready(function () {
     onReady: () => {
       HighlightActiveLink();
       console.log("shops loaded");
+
       // Call a function to set the active navigation link if it exists.
       // HighlightActiveLink();
       console.log("Shops page script loaded.");
@@ -434,7 +440,7 @@ $(document).ready(function () {
         if (!results) return;
 
         try {
-          const resp = await fetch("assets/jsons/shops.json", {
+          const resp = await fetch(SERVER + "/users", {
             cache: "no-cache",
           });
           if (!resp.ok) throw new Error("Failed to load products.json");
@@ -474,7 +480,7 @@ $(document).ready(function () {
           <div class="shop-info">
             <h3 class="shop-name">${s.username}</h3>
             <p class="shop-address">${s.address}</p>
-            <button class="shop-button" onclick="alert('To be implemented')">View Items</button>
+            <button class="shop-button" onclick="showModal('${s.username}', '${s.id}')">View Items</button>
           </div>
         </div>
         `;
@@ -775,3 +781,49 @@ function capitalizeFirstLetter(str) {
   }
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+const showModal = async (shopName, userId) => {
+  document.getElementById(
+    "modalTitle"
+  ).textContent = `Items for shop: ${shopName}`;
+
+  const modalItems = document.getElementById("modalItems");
+  modalItems.innerHTML = "Loading...";
+
+  // Fetch user products
+  try {
+    const res = await fetch(`${SERVER}/products/users/${userId}`);
+    const data = await res.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      modalItems.innerHTML = "<p>No products found.</p>";
+    } else {
+      modalItems.innerHTML = data
+        .map(
+          (p) => `
+          <div class="product-row">
+            <strong>${p.name}</strong><br>
+            ${p.description}<br>
+            <span>Price: $${Number(p.price).toFixed(2)}</span>
+          </div>
+        `
+        )
+        .join("");
+    }
+  } catch (error) {
+    modalItems.innerHTML = "<p>Error loading products.</p>";
+    console.error(error);
+  }
+
+  // Open modal
+  document.getElementById("productModal").style.display = "block";
+};
+const closeModal = () => {
+  document.getElementById("productModal").style.display = "none";
+};
+
+// Close when clicking outside the modal
+window.onclick = (event) => {
+  const modal = document.getElementById("productModal");
+  if (event.target === modal) modal.style.display = "none";
+};
