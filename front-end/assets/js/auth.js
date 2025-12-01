@@ -58,8 +58,25 @@ const handleFormSubmission = (form) => {
         event.preventDefault();
         event.stopPropagation();
       } else {
-        event.preventDefault();
-        console.log(`${form.id} submitted successfully!`);
+        event.preventDefault(); // prevent normal form submit
+
+        const formData = new FormData(form);
+
+        fetch(SERVER + "/register", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            alert("User registered successfully!");
+            // maybe redirect:
+            // window.location.href = "/login.html";
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("Registration failed");
+          });
       }
 
       form.classList.add("was-validated");

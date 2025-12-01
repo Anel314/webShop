@@ -735,11 +735,49 @@ const authPage = () => {
           event.preventDefault();
           event.stopPropagation();
         } else {
-          // If the form is valid, you can handle the submission here
-          // For example, send data to a server via fetch()
-          event.preventDefault(); // Prevent default for this demo
-          console.log(`${form.id} submitted successfully!`);
-          // alert('Form submitted successfully!');
+          event.preventDefault(); // prevent normal form submit
+
+          const formData = new FormData(form);
+          if (form.id === "loginForm") {
+            fetch(SERVER + "/login", {
+              method: "POST",
+              body: formData,
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                console.log(data);
+                if (data.error) {
+                  alert("Login failed: " + data.error);
+                } else {
+                  alert("Login successful!");
+                }
+              });
+          } else {
+            fetch(SERVER + "/register", {
+              method: "POST",
+              body: formData,
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                console.log(data);
+                if (data.error) {
+                  if (data.error.includes("SQLSTATE[23000]")) {
+                    alert("User with this email or username already exists.");
+                  } else {
+                    alert("Error: " + data.error);
+                  }
+                } else {
+                  alert("User registered successfully!");
+                }
+
+                // maybe redirect:
+                // window.location.href = "/login.html";
+              })
+              .catch((err) => {
+                console.error(err);
+                alert("Registration failed");
+              });
+          }
         }
 
         form.classList.add("was-validated");
