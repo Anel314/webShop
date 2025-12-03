@@ -746,10 +746,12 @@ const authPage = () => {
               .then((res) => res.json())
               .then((data) => {
                 console.log(data);
+
                 if (data.error) {
                   alert("Login failed: " + data.error);
                 } else {
-                  alert("Login successful!");
+                  alert("Login xdcfgvhbjnkml,s;ghsdfybiujnokpml[,;.gvybiuno!");
+                  console.log(data.user);
                 }
               });
           } else {
