@@ -745,13 +745,13 @@ const authPage = () => {
             })
               .then((res) => res.json())
               .then((data) => {
-                console.log(data);
+                const token = data.user.data.token;
+                sessionStorage.setItem("SessionName", token);
 
                 if (data.error) {
                   alert("Login failed: " + data.error);
                 } else {
-                  alert("Login xdcfgvhbjnkml,s;ghsdfybiujnokpml[,;.gvybiuno!");
-                  console.log(data.user);
+                  alert("Login Successful!");
                 }
               });
           } else {
@@ -867,3 +867,15 @@ window.onclick = (event) => {
   const modal = document.getElementById("productModal");
   if (event.target === modal) modal.style.display = "none";
 };
+
+function decodeJwt(token) {
+  try {
+    const base64Url = token.split(".")[1]; // Get the payload part
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/"); // Convert Base64Url to standard Base64
+    const decodedPayload = JSON.parse(window.atob(base64)); // Base64 decode and parse JSON
+    return decodedPayload;
+  } catch (e) {
+    console.error("Error decoding JWT:", e);
+    return null;
+  }
+}

@@ -151,6 +151,7 @@ CREATE TABLE `products` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `user_id` int unsigned NOT NULL,
+  `image` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_product_category` (`category_id`),
   KEY `fk_products_user` (`user_id`),
