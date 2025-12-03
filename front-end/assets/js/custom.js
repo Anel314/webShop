@@ -17,6 +17,76 @@ $(document).ready(function () {
     },
   });
 
+  app.route({
+    view: "profile",
+    load: "profile.html",
+    onReady: () => {
+      const userData = decodeJwt(sessionStorage.getItem("auth"));
+      console.log(userData.user);
+
+      const profileDiv = document.querySelector(".profile");
+      profileDiv.innerHTML = `
+        <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-image">
+        <img src="${userData.user.image}" alt="User Image">
+      </div>
+      <div class="profile-info">
+        <h2 class="profile-name">${userData.user.first_name} ${userData.user.last_name}</h2>
+        <p class="profile-username">${userData.user.username}</p>
+      </div>
+    </div>
+    <div class="profile-details">
+      <p><strong>Email:</strong>${userData.user.email} </p>
+      <p><strong>Address:</strong> ${userData.user.address}</p>
+    </div>
+    <div class="profile-items">
+      <!-- User items will go here -->
+    </div>
+        <button class="edit-btn" id="editProfileBtn">Edit</button>
+
+  </div>`;
+
+      const modalDiv = document.getElementById("editModal");
+      modalDiv.innerHTML = `
+        <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2>Edit Profile</h2>
+    <form id="editForm">
+      <label>First Name:</label>
+      <input type="text" id="firstName" value="${userData.user.first_name}" required>
+      <label>Last Name:</label>
+      <input type="text" id="lastName" value="${userData.user.last_name}" required>
+      <label>Username:</label>
+      <input type="text" id="username" value="${userData.user.username}" required>
+      <label>Email:</label>
+      <input type="email" id="email" value="${userData.user.email}" required>
+      <label>Address:</label>
+      <input type="text" id="address" value="${userData.user.address}" required>
+      <button type="submit">Save</button>
+    </form>
+  </div>`;
+
+      const modal = document.getElementById("editModal");
+      const btn = document.getElementById("editProfileBtn");
+      const closeBtn = document.getElementById("closeModal");
+      const form = document.getElementById("editForm");
+
+      btn.onclick = () => (modal.style.display = "block");
+      closeBtn.onclick = () => (modal.style.display = "none");
+      window.onclick = (e) => {
+        if (e.target == modal) modal.style.display = "none";
+      };
+
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        // Update the profile card with new values
+
+        modal.style.display = "none";
+      };
+    },
+  });
+
   //CATEGORIES PAGE
   app.route({
     view: "categories",
@@ -568,10 +638,12 @@ $(document).ready(function () {
     load: "listing.html",
     onReady: () => {
       HighlightActiveLink();
-      console.log("about loaded");
-      alert(
-        "This page will not be accessible if user is not logged in, will be implemented in further milestones"
-      );
+      $token = sessionStorage.getItem("auth");
+      if (!$token) {
+        alert("You must be logged in to create a listing.");
+        window.location.hash = "#auth";
+        return;
+      }
 
       const form = document.getElementById("productForm");
       const feedbackMessage = document.getElementById("form-feedback");
@@ -746,7 +818,7 @@ const authPage = () => {
               .then((res) => res.json())
               .then((data) => {
                 const token = data.user.data.token;
-                sessionStorage.setItem("SessionName", token);
+                sessionStorage.setItem("auth", token);
 
                 if (data.error) {
                   alert("Login failed: " + data.error);
@@ -773,13 +845,13 @@ const authPage = () => {
                 }
 
                 // maybe redirect:
-                // window.location.href = "/login.html";
               })
               .catch((err) => {
                 console.error(err);
                 alert("Registration failed");
               });
           }
+          window.location.hash = "#homepage";
         }
 
         form.classList.add("was-validated");

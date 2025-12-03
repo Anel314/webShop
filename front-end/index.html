@@ -37,6 +37,7 @@
     </style>
 
     <link rel="stylesheet" href="assets/css/spapp.css" />
+    <link rel="stylesheet" href="assets/css/profile.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
     <link rel="stylesheet" href="assets/css/products.css" />
     <link rel="stylesheet" href="assets/css/landing.css" />
@@ -60,6 +61,7 @@
   </head>
 
   <body>
+    <!-- Modal (unchanged) -->
     <div id="productModal" class="modal">
       <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
@@ -67,6 +69,8 @@
         <div id="modalItems" class="modal-items"></div>
       </div>
     </div>
+
+    <!-- Navbar -->
     <nav class="navbar">
       <a href="#homepage" class="nav-logo">Direct Finds</a>
 
@@ -76,9 +80,8 @@
         <li><a href="#shops">Shops</a></li>
       </ul>
 
-      <div class="user-actions">
-        <a href="#auth" class="login-link">Log in</a>
-        <a href="#listing" class="publish-btn">Create Listing</a>
+      <div class="user-actions" id="userActions">
+        <!-- Buttons will be dynamically inserted here -->
       </div>
 
       <button class="hamburger" id="hamburger">
@@ -87,14 +90,14 @@
         <span class="bar"></span>
       </button>
     </nav>
+
+    <!-- Mobile Nav -->
     <div class="mobile-nav" id="mobile-nav">
-      <ul>
+      <ul id="mobileUserActions">
         <li><a href="#homepage">Home</a></li>
         <li><a href="#categories">Products</a></li>
         <li><a href="#shops">Shops</a></li>
-        <li><a href="#listing">Create Listing</a></li>
-        <hr style="border: 1px solid #eee; margin: 1rem 0" />
-        <li><a href="#auth">Log in or Register</a></li>
+        <!-- Auth buttons will be inserted dynamically -->
       </ul>
     </div>
 
@@ -106,6 +109,7 @@
       <section id="shops" data-load="shops.html"></section>
       <section id="listing" data-load="listing.html"></section>
       <section id="auth" data-load="auth.html"></section>
+      <section id="profile" data-load="profile.html"></section>
       <section id="error_404" data-load="error_404.html">
         <h1 align="center" class="mt-4">To be implemented in next milestone</h1>
       </section>
