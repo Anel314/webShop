@@ -43,7 +43,10 @@ $(document).ready(function () {
     <div class="profile-items">
       <!-- User items will go here -->
     </div>
-        <button class="edit-btn" id="editProfileBtn">Edit</button>
+        <div class="profile-buttons">
+  <button class="edit-btn" id="editProfileBtn">Edit</button>
+  <button class="logout-btn" id="logoutBtn">Logout</button>
+</div>
 
   </div>`;
 
@@ -67,6 +70,12 @@ $(document).ready(function () {
     </form>
   </div>`;
 
+      const logoutBtn = document.getElementById("logoutBtn");
+      logoutBtn.onclick = () => {
+        sessionStorage.clear();
+        window.location.hash = "#homepage";
+        window.location.reload();
+      };
       const modal = document.getElementById("editModal");
       const btn = document.getElementById("editProfileBtn");
       const closeBtn = document.getElementById("closeModal");
@@ -263,11 +272,15 @@ $(document).ready(function () {
             }
 
             list.forEach((p) => {
+              const imagePath = SERVER + "/rest/routes/" + p.image;
+              console.log(imagePath);
+              console.log(p.image);
+
               const col = document.createElement("div");
               col.className = "col-md-4 mb-4 product-item";
               col.innerHTML = `
             <div class="card">
-              <img src="assets/images/logo.png"
+              <img src="${imagePath}"
                   class="card-img-top"
                   alt="${escapeHtml(p.name)}" />
 
@@ -644,83 +657,6 @@ $(document).ready(function () {
         window.location.hash = "#auth";
         return;
       }
-
-      const form = document.getElementById("productForm");
-      const feedbackMessage = document.getElementById("form-feedback");
-      const formErrorMessage = document.getElementById("form-error");
-
-      // Input fields
-      const nameInput = document.getElementById("name");
-      const priceInput = document.getElementById("price");
-      const stockInput = document.getElementById("stock_quantity");
-      const categoryInput = document.getElementById("category_id");
-      const imagePreview = document.getElementById("image-preview");
-      const productImageInput = document.getElementById("product_image");
-
-      // Error message elements
-      const imageError = document.getElementById("image-error");
-
-      const initialPreviewHTML = imagePreview.innerHTML;
-
-      // --- Image Preview Logic ---
-      imagePreview.addEventListener("click", () => {
-        productImageInput.click();
-      });
-
-      productImageInput.addEventListener("change", function () {
-        const file = this.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            imagePreview.innerHTML = `<img src="${e.target.result}" alt="Product Preview" class="img-fluid d-block mx-auto">`;
-          };
-          reader.readAsDataURL(file);
-          imagePreview.classList.remove("is-invalid");
-          imageError.classList.add("d-none");
-        }
-      });
-
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        // Hide previous messages
-        feedbackMessage.classList.add("d-none");
-        formErrorMessage.classList.add("d-none");
-
-        // Reset custom image upload validation
-        imagePreview.classList.remove("is-invalid");
-        imageError.classList.add("d-none");
-
-        let isCustomValid = true;
-
-        // --- Custom Validation for Image ---
-        if (productImageInput.files.length === 0) {
-          imagePreview.classList.add("is-invalid");
-          imageError.classList.remove("d-none");
-          isCustomValid = false;
-        }
-
-        // --- Bootstrap Validation ---
-        if (!form.checkValidity() || !isCustomValid) {
-          formErrorMessage.classList.remove("d-none");
-        } else {
-          feedbackMessage.classList.remove("d-none");
-
-          const formData = new FormData(form);
-          const data = Object.fromEntries(formData.entries());
-          console.log("Form data is valid:", data);
-
-          // For this demo, reset the form after a delay
-
-          form.reset();
-          form.classList.remove("was-validated");
-          imagePreview.innerHTML = initialPreviewHTML;
-          feedbackMessage.classList.add("d-none");
-        }
-
-        form.classList.add("was-validated");
-      });
     },
   });
 
@@ -843,8 +779,6 @@ const authPage = () => {
                 } else {
                   alert("User registered successfully!");
                 }
-
-                // maybe redirect:
               })
               .catch((err) => {
                 console.error(err);
@@ -852,6 +786,7 @@ const authPage = () => {
               });
           }
           window.location.hash = "#homepage";
+          location.reload();
         }
 
         form.classList.add("was-validated");

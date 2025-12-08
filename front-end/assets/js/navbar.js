@@ -59,5 +59,9 @@ function renderUserActions() {
   }
 }
 
-// Run on page load
+window.addEventListener("hashchange", () => {
+  if (location.hash === "#homepage") {
+    renderUserActions();
+  }
+});
 renderUserActions();

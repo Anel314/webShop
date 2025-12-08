@@ -125,10 +125,11 @@
           class="form-select form-select-lg"
         >
           <option value="" disabled selected>Select a category</option>
-          <option value="electronics">Electronics</option>
-          <option value="fashion">Fashion</option>
-          <option value="home">Home & Garden</option>
-          <option value="motors">Motors</option>
+          <option value="1">Electronics</option>
+          <option value="2">Books</option>
+          <option value="3">Clothing</option>
+          <option value="4">Home & Kitchen</option>
+          <option value="5">Sports</option>
         </select>
         <div class="invalid-feedback">Please select a category.</div>
       </div>
@@ -150,3 +151,134 @@
     </form>
   </div>
 </div>
+<script>
+  /* ---------------------------------------------------
+   IMAGE PREVIEW + UPLOAD
+--------------------------------------------------- */
+
+  const imageInput = document.getElementById("product_image");
+  const previewBox = document.getElementById("image-preview");
+  let uploadedImagePath = null; // path returned from backend
+
+  // When image is selected
+  imageInput.addEventListener("change", async function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      previewBox.innerHTML = `
+      <img src="${event.target.result}"
+           class="img-fluid rounded"
+           style="max-height: 200px; object-fit: cover;">
+    `;
+    };
+    reader.readAsDataURL(file);
+
+    // Upload image to backend
+    const imgForm = new FormData();
+    imgForm.append("image", file);
+
+    try {
+      const response = await fetch(
+        "http://localhost/webShop/back-end/upload-image",
+        {
+          method: "POST",
+          body: imgForm,
+        }
+      );
+
+      const data = await response.json();
+      console.log("Image uploaded:", data);
+
+      if (data.path) {
+        uploadedImagePath = data.path; // <-- SAVE PATH FOR PRODUCT FORM
+      } else {
+        console.error("Upload error:", data);
+      }
+    } catch (err) {
+      console.error("Image upload failed:", err);
+    }
+  });
+
+  /* ---------------------------------------------------
+   JWT DECODER
+--------------------------------------------------- */
+  function decodeJwt(token) {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      return JSON.parse(window.atob(base64));
+    } catch (e) {
+      console.error("JWT decode error:", e);
+      return null;
+    }
+  }
+
+  /* ---------------------------------------------------
+   PRODUCT FORM SUBMIT
+--------------------------------------------------- */
+  document
+    .getElementById("productForm")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+
+      // Reset messages
+      document.getElementById("form-feedback").classList.add("d-none");
+      document.getElementById("form-error").classList.add("d-none");
+
+      let isValid = form.checkValidity();
+
+      // Validate image uploaded
+      if (!uploadedImagePath) {
+        isValid = false;
+        document.getElementById("image-error").classList.remove("d-none");
+      } else {
+        document.getElementById("image-error").classList.add("d-none");
+      }
+
+      if (!isValid) {
+        document.getElementById("form-error").classList.remove("d-none");
+        return;
+      }
+
+      // FORM IS VALID – submit product
+      const formData = new FormData(form);
+
+      const user = decodeJwt(sessionStorage.getItem("auth"));
+      formData.set("user_id", user.user.id);
+
+      // IMPORTANT: ONLY SEND PATH, NOT THE FILE
+      formData.set("image", uploadedImagePath);
+
+      // Remove actual file field if exists
+      formData.delete("product_image");
+
+      try {
+        const response = await fetch(
+          "http://localhost/webShop/back-end/products",
+          {
+            method: "POST",
+            headers: {
+              auth: localStorage.getItem("authToken"),
+            },
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+        console.log("Product created:", data);
+
+        document.getElementById("form-feedback").classList.remove("d-none");
+        form.reset();
+        previewBox.innerHTML = ""; // Clear image preview
+        uploadedImagePath = null;
+      } catch (err) {
+        console.error("Product submit failed:", err);
+        document.getElementById("form-error").classList.remove("d-none");
+      }
+    });
+</script>

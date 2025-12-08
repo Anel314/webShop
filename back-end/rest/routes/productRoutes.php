@@ -397,3 +397,34 @@ Flight::route('DELETE /products/@id', function ($id) {
         Flight::json(["error" => $e->getMessage()], 400);
     }
 });
+
+
+
+Flight::route('POST /upload-image', function () {
+    if (!isset($_FILES['image'])) {
+        Flight::json(["error" => "No file uploaded"], 400);
+        return;
+    }
+
+    $file = $_FILES['image'];
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        Flight::json(["error" => "Upload error code: " . $file['error']], 400);
+        return;
+    }
+
+    $uploadsDir = __DIR__ . "/uploads";
+    if (!is_dir($uploadsDir)) {
+        mkdir($uploadsDir, 0775, true);
+    }
+
+    $fileName = time() . "_" . basename($file['name']);
+    $targetPath = $uploadsDir . "/" . $fileName;
+
+    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+        Flight::json(["error" => "Failed to move uploaded file"], 500);
+        return;
+    }
+
+    $imagePath = "uploads/" . $fileName;
+    Flight::json(["path" => $imagePath]);
+});

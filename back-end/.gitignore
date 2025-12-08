@@ -3,4 +3,4 @@
 
 # Ignore environment or configuration files
 /rest/config.php
-
+/rest/routes/uploads

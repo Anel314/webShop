@@ -64,20 +64,31 @@
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 15px;
 }
-
-.edit-btn {
-  margin-top: 20px;
+.profile-buttons button {
   padding: 10px 20px;
-  background: #007bff;
-  border: none;
-  color: white;
   font-size: 1em;
   border-radius: 8px;
+  border: none;
   cursor: pointer;
+  flex: 1; /* optional: makes them same width */
+}
+
+.edit-btn {
+  background-color: #007bff;
+  color: white;
 }
 
 .edit-btn:hover {
-  background: #0056b3;
+  background-color: #0056b3;
+}
+
+.logout-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.logout-btn:hover {
+  background-color: #b02a37;
 }
 
 /* Modal Styling */
