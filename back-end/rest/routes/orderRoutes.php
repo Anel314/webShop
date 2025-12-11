@@ -279,14 +279,14 @@ Flight::route('POST /orders', function () {
 
 
         }
-
+        Flight::cart()->clear_cart($data['user_id']);
         Flight::json([
             "message" => "Order created successfully",
             "order" => $order
         ], 201);
 
     } catch (Exception $e) {
-        Flight::json(["error" => $e->getFile()], 400);
+        Flight::json(["error" => $e->getMessage()], 400);
     }
 });
 //28

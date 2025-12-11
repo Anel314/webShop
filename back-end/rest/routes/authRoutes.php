@@ -177,7 +177,7 @@ Flight::route('POST /login', function () {
 // Register user
 /**
  * @OA\Post(
- *     path="/auth/register",
+ *     path="/register",
  *     summary="Register a new user account",
  *     tags={"Authentication"},
  *     @OA\RequestBody(

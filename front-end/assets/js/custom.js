@@ -237,8 +237,6 @@ $(document).ready(function () {
         if (!results) return;
 
         try {
-          console.log("DOEING SINETHIGN");
-
           const resp = await fetch(SERVER + "/products", {
             cache: "no-cache",
           });
@@ -273,13 +271,11 @@ $(document).ready(function () {
 
             list.forEach((p) => {
               const imagePath = SERVER + "/rest/routes/" + p.image;
-              console.log(imagePath);
-              console.log(p.image);
 
               const col = document.createElement("div");
               col.className = "col-md-4 mb-4 product-item";
               col.innerHTML = `
-            <div class="card">
+        <div class="card">
               <img src="${imagePath}"
                   class="card-img-top"
                   alt="${escapeHtml(p.name)}" />
@@ -293,7 +289,8 @@ $(document).ready(function () {
                   ${escapeHtml(p.description)}
                 </p>
 
-                <button class="shop-button" onclick="alert('To be implemented')">
+                <button class="shop-button" 
+                        onclick="addToCart(${p.id}, this)">
                   Add to Cart
                 </button>
               </div>
@@ -376,7 +373,6 @@ $(document).ready(function () {
 
       // Call a function to set the active navigation link if it exists.
       // HighlightActiveLink();
-      console.log("Shops page script loaded.");
 
       function paginateResults(containerSelector, pageSize) {
         const container = document.querySelector(containerSelector);
@@ -753,12 +749,11 @@ const authPage = () => {
             })
               .then((res) => res.json())
               .then((data) => {
-                const token = data.user.data.token;
-                sessionStorage.setItem("auth", token);
-
                 if (data.error) {
                   alert("Login failed: " + data.error);
                 } else {
+                  const token = data.user.data.token;
+                  sessionStorage.setItem("auth", token);
                   alert("Login Successful!");
                 }
               });
@@ -769,7 +764,6 @@ const authPage = () => {
             })
               .then((res) => res.json())
               .then((data) => {
-                console.log(data);
                 if (data.error) {
                   if (data.error.includes("SQLSTATE[23000]")) {
                     alert("User with this email or username already exists.");
@@ -777,6 +771,8 @@ const authPage = () => {
                     alert("Error: " + data.error);
                   }
                 } else {
+                  const token = data.user.data.token;
+                  sessionStorage.setItem("auth", token);
                   alert("User registered successfully!");
                 }
               })
