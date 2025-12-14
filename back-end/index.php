@@ -22,6 +22,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+Flight::register('middleware', "AuthMiddleware");
+
 Flight::register('auth', "AuthService");
 Flight::register('cart', "CartService");
 Flight::register('order', "OrderService");

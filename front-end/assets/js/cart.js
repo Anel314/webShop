@@ -31,7 +31,7 @@ async function fetchCartDataAndRender() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          auth: `Bearer ${sessionStorage.getItem("auth")}`,
+          auth: `${sessionStorage.getItem("auth")}`,
         },
       }
     );
@@ -72,7 +72,7 @@ async function addToCart(productId, buttonElement) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        auth: `Bearer ${sessionStorage.getItem("auth")}`,
+        auth: `${sessionStorage.getItem("auth")}`,
       },
       body: JSON.stringify(payload),
     });
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          auth: `Bearer ${sessionStorage.getItem("auth")}`,
+          auth: `${sessionStorage.getItem("auth")}`,
         },
       }
     );
@@ -257,7 +257,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            auth: `Bearer ${sessionStorage.getItem("auth")}`,
+            auth: `${sessionStorage.getItem("auth")}`,
           },
           body: JSON.stringify(payload),
         }
@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              auth: `Bearer ${sessionStorage.getItem("auth")}`,
+              auth: `${sessionStorage.getItem("auth")}`,
             },
             body: JSON.stringify(payload),
           }
@@ -340,7 +340,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            auth: `Bearer ${sessionStorage.getItem("auth")}`,
+            auth: `${sessionStorage.getItem("auth")}`,
           },
           body: JSON.stringify(data),
         })

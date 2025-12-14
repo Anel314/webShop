@@ -332,6 +332,8 @@ Flight::route('GET /products/users/@user_id', function ($user_id) {
  */
 
 Flight::route('PUT /products/@id', function ($id) {
+    Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
     $data = Flight::request()->data->getData();
     try {
         $existing = Flight::product()->get_product_by_id($id);
@@ -401,6 +403,7 @@ Flight::route('DELETE /products/@id', function ($id) {
 
 
 Flight::route('POST /upload-image', function () {
+
     if (!isset($_FILES['image'])) {
         Flight::json(["error" => "No file uploaded"], 400);
         return;

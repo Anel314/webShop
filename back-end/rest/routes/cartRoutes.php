@@ -1,7 +1,7 @@
 <?php
+require_once __DIR__ . '/../../middleware/AuthMiddleware.php';
 
 Flight::group('/cart', function () {
-
     // Get all cart items for a user
     /**
      * @OA\Get(
@@ -50,6 +50,8 @@ Flight::group('/cart', function () {
      * )
      */
     Flight::route('GET /@user_id', function ($user_id) {
+        Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
         try {
             $items = Flight::cart()->get_all_items($user_id);
             Flight::json($items);
@@ -88,6 +90,8 @@ Flight::group('/cart', function () {
      * )
      */
     Flight::route('GET /@user_id/total', function ($user_id) {
+        Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
         try {
             $total = Flight::cart()->get_total_item_price($user_id);
             Flight::json(["total_price" => $total]);
@@ -135,6 +139,8 @@ Flight::group('/cart', function () {
      * )
      */
     Flight::route('POST /', function () {
+        Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
         $data = Flight::request()->data->getData();
 
         if (empty($data['user_id']) || empty($data['product_id']) || empty($data['quantity'])) {
@@ -192,6 +198,8 @@ Flight::group('/cart', function () {
      * )
      */
     Flight::route('PUT /', function () {
+        Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
         $data = Flight::request()->data->getData();
 
         if (empty($data['user_id']) || empty($data['product_id']) || !isset($data['quantity'])) {
@@ -246,6 +254,8 @@ Flight::group('/cart', function () {
      * )
      */
     Flight::route('DELETE /@user_id/@product_id', function ($user_id, $product_id) {
+        Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
         try {
             $deleted = Flight::cart()->remove_item(intval($user_id), intval($product_id));
             if ($deleted) {
@@ -285,6 +295,8 @@ Flight::group('/cart', function () {
      * )
      */
     Flight::route('DELETE /@user_id', function ($user_id) {
+        Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
         try {
             $cleared = Flight::cart()->clear_cart(intval($user_id));
             if ($cleared) {

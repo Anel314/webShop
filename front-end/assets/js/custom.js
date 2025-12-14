@@ -125,6 +125,9 @@ $(document).ready(function () {
 
           const uploadRes = await fetch(SERVER + "/upload-image", {
             method: "POST",
+            headers: {
+              Authorization: `${token}`,
+            },
             body: imgFormData,
           });
 
@@ -146,7 +149,7 @@ $(document).ready(function () {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `${token}`,
           },
           body: JSON.stringify(updateData),
         });

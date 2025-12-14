@@ -37,6 +37,8 @@
  * )
  */
 Flight::route('GET /orders', function () {
+    Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
     try {
         Flight::json(Flight::order()->getAll());
     } catch (Exception $e) {
@@ -91,6 +93,8 @@ Flight::route('GET /orders', function () {
  * )
  */
 Flight::route('GET /orders/@id', function ($id) {
+    Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
     try {
         $order = Flight::order()->get_order($id);
         if ($order) {
@@ -153,6 +157,8 @@ Flight::route('GET /orders/@id', function ($id) {
  * )
  */
 Flight::route('GET /orders/user/@user_id', function ($user_id) {
+    Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
     try {
         $orders = Flight::order()->get_orders_by_user($user_id);
         if ($orders) {
@@ -223,6 +229,8 @@ Flight::route('GET /orders/user/@user_id', function ($user_id) {
  * )
  */
 Flight::route('POST /orders', function () {
+    Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
     $data = Flight::request()->data->getData();
 
     if (empty($data['user_id']) || empty($data['shipping_address'])) {
@@ -347,6 +355,8 @@ Flight::route('POST /orders', function () {
  * )
  */
 Flight::route('PUT /orders/@id', function ($id) {
+    Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
     $data = Flight::request()->data->getData();
     try {
         $existing = Flight::order()->get_order($id);
@@ -402,6 +412,8 @@ Flight::route('PUT /orders/@id', function ($id) {
  * )
  */
 Flight::route('DELETE /orders/@id', function ($id) {
+    Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
     try {
         $existing = Flight::order()->get_order($id);
         if (!$existing) {
