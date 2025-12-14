@@ -48,7 +48,7 @@ async function fetchCartDataAndRender() {
 
 async function addToCart(productId, buttonElement) {
   if (!isAppInitialized) {
-    alert("Cart component not yet initialized. Please wait a moment.");
+    alert("You must log in before adding items to the cart.");
     return;
   }
 
@@ -330,9 +330,42 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   orderButton.addEventListener("click", () => {
     if (cart.length > 0) {
-      alert(
-        `Order Placed! Total: ${cartTotalElement.textContent}. \nIn a real SPA, this would navigate to a checkout page.`
-      );
+      const data = {
+        user_id: cart[0].cart_user_id,
+        cart_id: cart[0].cart_id,
+        shipping_address: user.user.address,
+      };
+      try {
+        fetch("http://localhost/webShop/back-end/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            auth: `Bearer ${sessionStorage.getItem("auth")}`,
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(
+                `API order failed with status: ${response.status}`
+              );
+            }
+            return response.json();
+          })
+          .then((orderResponse) => {
+            alert("Order placed successfully!");
+            cart = [];
+            globalRenderCartItems();
+            toggleModal();
+          })
+          .catch((error) => {
+            console.error("Failed to place order via API:", error);
+            alert("Failed to place order. Please try again.");
+          });
+      } catch (error) {
+        console.error("Failed to place order via API:", error);
+        alert("Failed to place order. Please try again.");
+      }
     } else {
       alert("Your cart is empty!");
     }

@@ -1,8 +1,5 @@
 let SERVER = "http://localhost/webShop/back-end";
 $(document).ready(function () {
-  // Don't force section heights with JS. Let CSS handle sizing so the
-  // footer sits after the content and doesn't overlap.
-
   var app = $.spapp({ defaultView: "homepage" }); // initialize
 
   // define routes
@@ -12,7 +9,6 @@ $(document).ready(function () {
     load: "homepage.html",
 
     onReady: () => {
-      console.log("Home loaded");
       HighlightActiveLink();
     },
   });
@@ -21,77 +17,145 @@ $(document).ready(function () {
     view: "profile",
     load: "profile.html",
     onReady: () => {
-      const userData = decodeJwt(sessionStorage.getItem("auth"));
-      console.log(userData.user);
+      const token = sessionStorage.getItem("auth");
+      const userData = decodeJwt(token);
 
       const profileDiv = document.querySelector(".profile");
-      profileDiv.innerHTML = `
-        <div class="profile-card">
-    <div class="profile-header">
-      <div class="profile-image">
-        <img src="${userData.user.image}" alt="User Image">
-      </div>
-      <div class="profile-info">
-        <h2 class="profile-name">${userData.user.first_name} ${userData.user.last_name}</h2>
-        <p class="profile-username">${userData.user.username}</p>
-      </div>
-    </div>
-    <div class="profile-details">
-      <p><strong>Email:</strong>${userData.user.email} </p>
-      <p><strong>Address:</strong> ${userData.user.address}</p>
-    </div>
-    <div class="profile-items">
-      <!-- User items will go here -->
-    </div>
-        <div class="profile-buttons">
-  <button class="edit-btn" id="editProfileBtn">Edit</button>
-  <button class="logout-btn" id="logoutBtn">Logout</button>
-</div>
+      const userImage = SERVER + "/rest/routes/" + userData.user.image;
 
-  </div>`;
+      profileDiv.innerHTML = `
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-image">
+            <img src="${userImage}" alt="User Image" id="profileImg">
+          </div>
+          <div class="profile-info">
+            <h2 class="profile-name">${userData.user.first_name} ${userData.user.last_name}</h2>
+            <p class="profile-username">${userData.user.username}</p>
+          </div>
+        </div>
+
+        <div class="profile-details">
+          <p><strong>Email:</strong> ${userData.user.email}</p>
+          <p><strong>Address:</strong> ${userData.user.address}</p>
+        </div>
+
+        <div class="profile-buttons">
+          <button class="edit-btn" id="editProfileBtn">Edit</button>
+          <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    `;
+
+      /* ================= MODAL ================= */
 
       const modalDiv = document.getElementById("editModal");
       modalDiv.innerHTML = `
-        <div class="modal-content">
-    <span class="close" id="closeModal">&times;</span>
-    <h2>Edit Profile</h2>
-    <form id="editForm">
-      <label>First Name:</label>
-      <input type="text" id="firstName" value="${userData.user.first_name}" required>
-      <label>Last Name:</label>
-      <input type="text" id="lastName" value="${userData.user.last_name}" required>
-      <label>Username:</label>
-      <input type="text" id="username" value="${userData.user.username}" required>
-      <label>Email:</label>
-      <input type="email" id="email" value="${userData.user.email}" required>
-      <label>Address:</label>
-      <input type="text" id="address" value="${userData.user.address}" required>
-      <button type="submit">Save</button>
-    </form>
-  </div>`;
+      <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2>Edit Profile</h2>
 
-      const logoutBtn = document.getElementById("logoutBtn");
-      logoutBtn.onclick = () => {
+        <form id="editForm" enctype="multipart/form-data">
+          <label>First Name:</label>
+          <input type="text" id="firstName" value="${userData.user.first_name}" required>
+
+          <label>Last Name:</label>
+          <input type="text" id="lastName" value="${userData.user.last_name}" required>
+
+          <label>Username:</label>
+          <input type="text" id="username" value="${userData.user.username}" required>
+
+          <label>Email:</label>
+          <input type="email" id="email" value="${userData.user.email}" required>
+
+          <label>Address:</label>
+          <input type="text" id="address" value="${userData.user.address}" required>
+
+          <label>Profile Picture:</label>
+          <input type="file" id="profileImage" accept="image/*">
+
+          <button type="submit">Save</button>
+        </form>
+      </div>
+    `;
+
+      /* ================= LOGOUT ================= */
+
+      document.getElementById("logoutBtn").onclick = () => {
         sessionStorage.clear();
         window.location.hash = "#homepage";
         window.location.reload();
       };
+
+      /* ================= MODAL LOGIC ================= */
+
       const modal = document.getElementById("editModal");
-      const btn = document.getElementById("editProfileBtn");
+      const openBtn = document.getElementById("editProfileBtn");
       const closeBtn = document.getElementById("closeModal");
       const form = document.getElementById("editForm");
+      const imageInput = document.getElementById("profileImage");
+      const profileImg = document.getElementById("profileImg");
 
-      btn.onclick = () => (modal.style.display = "block");
+      openBtn.onclick = () => (modal.style.display = "block");
       closeBtn.onclick = () => (modal.style.display = "none");
+
       window.onclick = (e) => {
-        if (e.target == modal) modal.style.display = "none";
+        if (e.target === modal) modal.style.display = "none";
       };
 
-      form.onsubmit = (e) => {
+      /* ================= IMAGE PREVIEW ================= */
+
+      imageInput.onchange = () => {
+        if (imageInput.files.length > 0) {
+          profileImg.src = URL.createObjectURL(imageInput.files[0]);
+        }
+      };
+
+      /* ================= FORM SUBMIT ================= */
+
+      form.onsubmit = async (e) => {
         e.preventDefault();
-        // Update the profile card with new values
+
+        let imagePath = userData.user.image;
+
+        // 1️⃣ Upload image if selected
+        if (imageInput.files.length > 0) {
+          const imgFormData = new FormData();
+          imgFormData.append("image", imageInput.files[0]);
+
+          const uploadRes = await fetch(SERVER + "/upload-image", {
+            method: "POST",
+            body: imgFormData,
+          });
+
+          const uploadData = await uploadRes.json();
+          imagePath = uploadData.path;
+        }
+
+        // 2️⃣ Send updated profile data
+        const updateData = {
+          first_name: document.getElementById("firstName").value,
+          last_name: document.getElementById("lastName").value,
+          username: document.getElementById("username").value,
+          email: document.getElementById("email").value,
+          address: document.getElementById("address").value,
+          image: imagePath,
+        };
+        const userLink = SERVER + "/users/" + userData.user.id;
+        await fetch(userLink, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updateData),
+        });
 
         modal.style.display = "none";
+        alert("Profile updated. Please log in again.");
+        sessionStorage.clear();
+        window.location.hash = "#homepage";
+        window.location.reload();
       };
     },
   });
@@ -102,7 +166,6 @@ $(document).ready(function () {
     load: "categories.html",
     onReady: () => {
       HighlightActiveLink();
-      console.log("categories loaded");
 
       function paginateResults(containerSelector, pageSize) {
         const container = document.querySelector(containerSelector);
@@ -369,7 +432,6 @@ $(document).ready(function () {
     load: "shops.html",
     onReady: () => {
       HighlightActiveLink();
-      console.log("shops loaded");
 
       // Call a function to set the active navigation link if it exists.
       // HighlightActiveLink();
@@ -552,10 +614,12 @@ $(document).ready(function () {
 
             list.forEach((s) => {
               const col = document.createElement("div");
+              const shopImage = SERVER + "/rest/routes/" + s.image;
+
               col.className = "col-md-4 mb-4 product-item";
               col.innerHTML = `
         <div class="shop-card">
-          <img src="${s.profile_image_url}" alt="Shop Image" class="shop-image">
+          <img src="${shopImage}" alt="Shop Image" class="shop-image">
           <div class="shop-info">
             <h3 class="shop-name">${s.username}</h3>
             <p class="shop-address">${s.address}</p>
@@ -755,6 +819,8 @@ const authPage = () => {
                   const token = data.user.data.token;
                   sessionStorage.setItem("auth", token);
                   alert("Login Successful!");
+                  window.location.hash = "#homepage";
+                  location.reload();
                 }
               });
           } else {
@@ -774,6 +840,8 @@ const authPage = () => {
                   const token = data.user.data.token;
                   sessionStorage.setItem("auth", token);
                   alert("User registered successfully!");
+                  window.location.hash = "#homepage";
+                  location.reload();
                 }
               })
               .catch((err) => {
@@ -781,8 +849,6 @@ const authPage = () => {
                 alert("Registration failed");
               });
           }
-          window.location.hash = "#homepage";
-          location.reload();
         }
 
         form.classList.add("was-validated");
