@@ -37,6 +37,8 @@
     </style>
 
     <link rel="stylesheet" href="assets/css/spapp.css" />
+    <link rel="stylesheet" href="assets/css/profile.css" />
+    <link rel="stylesheet" href="assets/css/cart.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
     <link rel="stylesheet" href="assets/css/products.css" />
     <link rel="stylesheet" href="assets/css/landing.css" />
@@ -60,6 +62,16 @@
   </head>
 
   <body>
+    <!-- Modal (unchanged) -->
+    <div id="productModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <div id="modalItems" class="modal-items"></div>
+      </div>
+    </div>
+
+    <!-- Navbar -->
     <nav class="navbar">
       <a href="#homepage" class="nav-logo">Direct Finds</a>
 
@@ -69,9 +81,8 @@
         <li><a href="#shops">Shops</a></li>
       </ul>
 
-      <div class="user-actions">
-        <a href="#auth" class="login-link">Log in</a>
-        <a href="#listing" class="publish-btn">Create Listing</a>
+      <div class="user-actions" id="userActions">
+        <!-- Buttons will be dynamically inserted here -->
       </div>
 
       <button class="hamburger" id="hamburger">
@@ -80,14 +91,14 @@
         <span class="bar"></span>
       </button>
     </nav>
+
+    <!-- Mobile Nav -->
     <div class="mobile-nav" id="mobile-nav">
-      <ul>
+      <ul id="mobileUserActions">
         <li><a href="#homepage">Home</a></li>
         <li><a href="#categories">Products</a></li>
         <li><a href="#shops">Shops</a></li>
-        <li><a href="#listing">Create Listing</a></li>
-        <hr style="border: 1px solid #eee; margin: 1rem 0" />
-        <li><a href="#auth">Log in or Register</a></li>
+        <!-- Auth buttons will be inserted dynamically -->
       </ul>
     </div>
 
@@ -99,10 +110,49 @@
       <section id="shops" data-load="shops.html"></section>
       <section id="listing" data-load="listing.html"></section>
       <section id="auth" data-load="auth.html"></section>
+      <section id="profile" data-load="profile.html"></section>
       <section id="error_404" data-load="error_404.html">
         <h1 align="center" class="mt-4">To be implemented in next milestone</h1>
       </section>
     </main>
+
+    <div id="cart-component">
+      <button
+        id="cart-icon-button"
+        aria-controls="cart-modal"
+        aria-expanded="false"
+      >
+        <span>🛒</span>
+        <span id="item-count-badge" class="badge hidden">0</span>
+      </button>
+
+      <div
+        id="cart-modal"
+        class="modal-overlay hidden"
+        aria-modal="true"
+        role="dialog"
+      >
+        <div class="modal-content">
+          <h3>Your Shopping Cart</h3>
+
+          <ul id="cart-product-list" class="product-list"></ul>
+
+          <div id="empty-cart-message">Your cart is empty.</div>
+
+          <div class="cart-summary hidden">
+            <div class="total-price">
+              <strong>Total:</strong>
+              <span id="cart-total-price">$0.00</span>
+            </div>
+
+            <button id="order-button">Proceed to Checkout</button>
+          </div>
+
+          <button class="close-button">&times;</button>
+        </div>
+      </div>
+    </div>
+
     <footer class="site-footer">
       <div class="footer-content">
         &copy; 2025 Direct Finds. All rights reserved.
@@ -117,6 +167,7 @@
     <script src="./assets/js/jquery.spapp.js"></script>
     <script src="./assets/js/custom.js"></script>
     <script src="./assets/js/auth.js"></script>
+    <script src="./assets/js/cart.js"></script>
     <script src="./assets/js/shops.js"></script>
 
     <!--BOOTSTRAP-->

@@ -1,7 +1,5 @@
+let SERVER = "http://localhost/webShop/back-end";
 $(document).ready(function () {
-  // Don't force section heights with JS. Let CSS handle sizing so the
-  // footer sits after the content and doesn't overlap.
-
   var app = $.spapp({ defaultView: "homepage" }); // initialize
 
   // define routes
@@ -11,8 +9,157 @@ $(document).ready(function () {
     load: "homepage.html",
 
     onReady: () => {
-      console.log("Home loaded");
       HighlightActiveLink();
+    },
+  });
+
+  app.route({
+    view: "profile",
+    load: "profile.html",
+    onReady: () => {
+      const token = sessionStorage.getItem("auth");
+      const userData = decodeJwt(token);
+
+      const profileDiv = document.querySelector(".profile");
+      const userImage = SERVER + "/rest/routes/" + userData.user.image;
+
+      profileDiv.innerHTML = `
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-image">
+            <img src="${userImage}" alt="User Image" id="profileImg">
+          </div>
+          <div class="profile-info">
+            <h2 class="profile-name">${userData.user.first_name} ${userData.user.last_name}</h2>
+            <p class="profile-username">${userData.user.username}</p>
+          </div>
+        </div>
+
+        <div class="profile-details">
+          <p><strong>Email:</strong> ${userData.user.email}</p>
+          <p><strong>Address:</strong> ${userData.user.address}</p>
+        </div>
+
+        <div class="profile-buttons">
+          <button class="edit-btn" id="editProfileBtn">Edit</button>
+          <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    `;
+
+      /* ================= MODAL ================= */
+
+      const modalDiv = document.getElementById("editModal");
+      modalDiv.innerHTML = `
+      <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2>Edit Profile</h2>
+
+        <form id="editForm" enctype="multipart/form-data">
+          <label>First Name:</label>
+          <input type="text" id="firstName" value="${userData.user.first_name}" required>
+
+          <label>Last Name:</label>
+          <input type="text" id="lastName" value="${userData.user.last_name}" required>
+
+          <label>Username:</label>
+          <input type="text" id="username" value="${userData.user.username}" required>
+
+          <label>Email:</label>
+          <input type="email" id="email" value="${userData.user.email}" required>
+
+          <label>Address:</label>
+          <input type="text" id="address" value="${userData.user.address}" required>
+
+          <label>Profile Picture:</label>
+          <input type="file" id="profileImage" accept="image/*">
+
+          <button type="submit">Save</button>
+        </form>
+      </div>
+    `;
+
+      /* ================= LOGOUT ================= */
+
+      document.getElementById("logoutBtn").onclick = () => {
+        sessionStorage.clear();
+        window.location.hash = "#homepage";
+        window.location.reload();
+      };
+
+      /* ================= MODAL LOGIC ================= */
+
+      const modal = document.getElementById("editModal");
+      const openBtn = document.getElementById("editProfileBtn");
+      const closeBtn = document.getElementById("closeModal");
+      const form = document.getElementById("editForm");
+      const imageInput = document.getElementById("profileImage");
+      const profileImg = document.getElementById("profileImg");
+
+      openBtn.onclick = () => (modal.style.display = "block");
+      closeBtn.onclick = () => (modal.style.display = "none");
+
+      window.onclick = (e) => {
+        if (e.target === modal) modal.style.display = "none";
+      };
+
+      /* ================= IMAGE PREVIEW ================= */
+
+      imageInput.onchange = () => {
+        if (imageInput.files.length > 0) {
+          profileImg.src = URL.createObjectURL(imageInput.files[0]);
+        }
+      };
+
+      /* ================= FORM SUBMIT ================= */
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+
+        let imagePath = userData.user.image;
+
+        // 1️⃣ Upload image if selected
+        if (imageInput.files.length > 0) {
+          const imgFormData = new FormData();
+          imgFormData.append("image", imageInput.files[0]);
+
+          const uploadRes = await fetch(SERVER + "/upload-image", {
+            method: "POST",
+            headers: {
+              Authorization: `${token}`,
+            },
+            body: imgFormData,
+          });
+
+          const uploadData = await uploadRes.json();
+          imagePath = uploadData.path;
+        }
+
+        // 2️⃣ Send updated profile data
+        const updateData = {
+          first_name: document.getElementById("firstName").value,
+          last_name: document.getElementById("lastName").value,
+          username: document.getElementById("username").value,
+          email: document.getElementById("email").value,
+          address: document.getElementById("address").value,
+          image: imagePath,
+        };
+        const userLink = SERVER + "/users/" + userData.user.id;
+        await fetch(userLink, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify(updateData),
+        });
+
+        modal.style.display = "none";
+        alert("Profile updated. Please log in again.");
+        sessionStorage.clear();
+        window.location.hash = "#homepage";
+        window.location.reload();
+      };
     },
   });
 
@@ -22,7 +169,6 @@ $(document).ready(function () {
     load: "categories.html",
     onReady: () => {
       HighlightActiveLink();
-      console.log("categories loaded");
 
       function paginateResults(containerSelector, pageSize) {
         const container = document.querySelector(containerSelector);
@@ -157,9 +303,10 @@ $(document).ready(function () {
         if (!results) return;
 
         try {
-          const resp = await fetch("assets/jsons/products.json", {
+          const resp = await fetch(SERVER + "/products", {
             cache: "no-cache",
           });
+
           if (!resp.ok) throw new Error("Failed to load products.json");
           const products = await resp.json();
 
@@ -189,28 +336,32 @@ $(document).ready(function () {
             }
 
             list.forEach((p) => {
+              const imagePath = SERVER + "/rest/routes/" + p.image;
+
               const col = document.createElement("div");
               col.className = "col-md-4 mb-4 product-item";
               col.innerHTML = `
-          <div class="card">
-            <img src="${escapeHtml(
-              p.image
-            )}" class="card-img-top" alt="${escapeHtml(
-                p.title
-              )}" onerror="this.src='assets/images/logo.png'" />
-            <div class="card-body">
-              <h5 class="card-title">${escapeHtml(p.title)}</h5>
-              <p class="card-text">${escapeHtml(p.location)} — $${Number(
-                p.price
-              ).toFixed(2)}</p>
-              <p class="card-text text-muted small">${escapeHtml(
-                p.description
-              )}</p>
-            <button class="shop-button" onclick="alert('To be implemented')">Add to Cart</button>
+        <div class="card">
+              <img src="${imagePath}"
+                  class="card-img-top"
+                  alt="${escapeHtml(p.name)}" />
 
+              <div class="card-body">
+                <h5 class="card-title">${escapeHtml(p.name)}</h5>
+
+                <p class="card-text">$${Number(p.price).toFixed(2)}</p>
+
+                <p class="card-text text-muted small">
+                  ${escapeHtml(p.description)}
+                </p>
+
+                <button class="shop-button" 
+                        onclick="addToCart(${p.id}, this)">
+                  Add to Cart
+                </button>
+              </div>
             </div>
-          </div>
-        `;
+          `;
               results.appendChild(col);
             });
           }
@@ -284,10 +435,9 @@ $(document).ready(function () {
     load: "shops.html",
     onReady: () => {
       HighlightActiveLink();
-      console.log("shops loaded");
+
       // Call a function to set the active navigation link if it exists.
       // HighlightActiveLink();
-      console.log("Shops page script loaded.");
 
       function paginateResults(containerSelector, pageSize) {
         const container = document.querySelector(containerSelector);
@@ -434,7 +584,7 @@ $(document).ready(function () {
         if (!results) return;
 
         try {
-          const resp = await fetch("assets/jsons/shops.json", {
+          const resp = await fetch(SERVER + "/users", {
             cache: "no-cache",
           });
           if (!resp.ok) throw new Error("Failed to load products.json");
@@ -467,14 +617,16 @@ $(document).ready(function () {
 
             list.forEach((s) => {
               const col = document.createElement("div");
+              const shopImage = SERVER + "/rest/routes/" + s.image;
+
               col.className = "col-md-4 mb-4 product-item";
               col.innerHTML = `
         <div class="shop-card">
-          <img src="${s.profile_image_url}" alt="Shop Image" class="shop-image">
+          <img src="${shopImage}" alt="Shop Image" class="shop-image">
           <div class="shop-info">
             <h3 class="shop-name">${s.username}</h3>
             <p class="shop-address">${s.address}</p>
-            <button class="shop-button" onclick="alert('To be implemented')">View Items</button>
+            <button class="shop-button" onclick="showModal('${s.username}', '${s.id}')">View Items</button>
           </div>
         </div>
         `;
@@ -562,87 +714,12 @@ $(document).ready(function () {
     load: "listing.html",
     onReady: () => {
       HighlightActiveLink();
-      console.log("about loaded");
-      alert(
-        "This page will not be accessible if user is not logged in, will be implemented in further milestones"
-      );
-
-      const form = document.getElementById("productForm");
-      const feedbackMessage = document.getElementById("form-feedback");
-      const formErrorMessage = document.getElementById("form-error");
-
-      // Input fields
-      const nameInput = document.getElementById("name");
-      const priceInput = document.getElementById("price");
-      const stockInput = document.getElementById("stock_quantity");
-      const categoryInput = document.getElementById("category_id");
-      const imagePreview = document.getElementById("image-preview");
-      const productImageInput = document.getElementById("product_image");
-
-      // Error message elements
-      const imageError = document.getElementById("image-error");
-
-      const initialPreviewHTML = imagePreview.innerHTML;
-
-      // --- Image Preview Logic ---
-      imagePreview.addEventListener("click", () => {
-        productImageInput.click();
-      });
-
-      productImageInput.addEventListener("change", function () {
-        const file = this.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            imagePreview.innerHTML = `<img src="${e.target.result}" alt="Product Preview" class="img-fluid d-block mx-auto">`;
-          };
-          reader.readAsDataURL(file);
-          imagePreview.classList.remove("is-invalid");
-          imageError.classList.add("d-none");
-        }
-      });
-
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        // Hide previous messages
-        feedbackMessage.classList.add("d-none");
-        formErrorMessage.classList.add("d-none");
-
-        // Reset custom image upload validation
-        imagePreview.classList.remove("is-invalid");
-        imageError.classList.add("d-none");
-
-        let isCustomValid = true;
-
-        // --- Custom Validation for Image ---
-        if (productImageInput.files.length === 0) {
-          imagePreview.classList.add("is-invalid");
-          imageError.classList.remove("d-none");
-          isCustomValid = false;
-        }
-
-        // --- Bootstrap Validation ---
-        if (!form.checkValidity() || !isCustomValid) {
-          formErrorMessage.classList.remove("d-none");
-        } else {
-          feedbackMessage.classList.remove("d-none");
-
-          const formData = new FormData(form);
-          const data = Object.fromEntries(formData.entries());
-          console.log("Form data is valid:", data);
-
-          // For this demo, reset the form after a delay
-
-          form.reset();
-          form.classList.remove("was-validated");
-          imagePreview.innerHTML = initialPreviewHTML;
-          feedbackMessage.classList.add("d-none");
-        }
-
-        form.classList.add("was-validated");
-      });
+      $token = sessionStorage.getItem("auth");
+      if (!$token) {
+        alert("You must be logged in to create a listing.");
+        window.location.hash = "#auth";
+        return;
+      }
     },
   });
 
@@ -729,11 +806,52 @@ const authPage = () => {
           event.preventDefault();
           event.stopPropagation();
         } else {
-          // If the form is valid, you can handle the submission here
-          // For example, send data to a server via fetch()
-          event.preventDefault(); // Prevent default for this demo
-          console.log(`${form.id} submitted successfully!`);
-          // alert('Form submitted successfully!');
+          event.preventDefault(); // prevent normal form submit
+
+          const formData = new FormData(form);
+          if (form.id === "loginForm") {
+            fetch(SERVER + "/login", {
+              method: "POST",
+              body: formData,
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.error) {
+                  alert("Login failed: " + data.error);
+                } else {
+                  const token = data.user.data.token;
+                  sessionStorage.setItem("auth", token);
+                  alert("Login Successful!");
+                  window.location.hash = "#homepage";
+                  location.reload();
+                }
+              });
+          } else {
+            fetch(SERVER + "/register", {
+              method: "POST",
+              body: formData,
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.error) {
+                  if (data.error.includes("SQLSTATE[23000]")) {
+                    alert("User with this email or username already exists.");
+                  } else {
+                    alert("Error: " + data.error);
+                  }
+                } else {
+                  const token = data.user.data.token;
+                  sessionStorage.setItem("auth", token);
+                  alert("User registered successfully!");
+                  window.location.hash = "#homepage";
+                  location.reload();
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+                alert("Registration failed");
+              });
+          }
         }
 
         form.classList.add("was-validated");
@@ -774,4 +892,62 @@ function capitalizeFirstLetter(str) {
     return ""; // Handle empty strings
   }
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+const showModal = async (shopName, userId) => {
+  document.getElementById(
+    "modalTitle"
+  ).textContent = `Items for shop: ${shopName}`;
+
+  const modalItems = document.getElementById("modalItems");
+  modalItems.innerHTML = "Loading...";
+
+  // Fetch user products
+  try {
+    const res = await fetch(`${SERVER}/products/users/${userId}`);
+    const data = await res.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      modalItems.innerHTML = "<p>No products found.</p>";
+    } else {
+      modalItems.innerHTML = data
+        .map(
+          (p) => `
+          <div class="product-row">
+            <strong>${p.name}</strong><br>
+            ${p.description}<br>
+            <span>Price: $${Number(p.price).toFixed(2)}</span>
+          </div>
+        `
+        )
+        .join("");
+    }
+  } catch (error) {
+    modalItems.innerHTML = "<p>Error loading products.</p>";
+    console.error(error);
+  }
+
+  // Open modal
+  document.getElementById("productModal").style.display = "block";
+};
+const closeModal = () => {
+  document.getElementById("productModal").style.display = "none";
+};
+
+// Close when clicking outside the modal
+window.onclick = (event) => {
+  const modal = document.getElementById("productModal");
+  if (event.target === modal) modal.style.display = "none";
+};
+
+function decodeJwt(token) {
+  try {
+    const base64Url = token.split(".")[1]; // Get the payload part
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/"); // Convert Base64Url to standard Base64
+    const decodedPayload = JSON.parse(window.atob(base64)); // Base64 decode and parse JSON
+    return decodedPayload;
+  } catch (e) {
+    console.error("Error decoding JWT:", e);
+    return null;
+  }
 }

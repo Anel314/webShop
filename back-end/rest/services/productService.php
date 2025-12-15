@@ -31,8 +31,11 @@ class ProductService extends BaseService
 
         return $this->dao->decrease_quantity($product_id, $quantity);
     }
+    public function get_product_by_user($user_id)
+    {
 
+        return $this->dao->get_product_by_user($user_id);
+    }
 }
-
 
 ?>

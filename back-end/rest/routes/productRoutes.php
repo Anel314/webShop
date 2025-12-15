@@ -213,6 +213,66 @@ Flight::route('POST /products', function () {
 
 
 /**
+ * @OA\Get(
+ * path="/products/users/{user_id}",
+ * summary="Get all products by a specific user",
+ * tags={"Products"},
+ * description="Retrieves a list of all products associated with a given user ID.",
+ * @OA\Parameter(
+ * name="user_id",
+ * in="path",
+ * required=true,
+ * description="ID of the user whose products are to be retrieved",
+ * @OA\Schema(
+ * type="integer",
+ * example=1
+ * )
+ * ),
+ * @OA\Response(
+ * response=200,
+ * description="A list of products successfully retrieved",
+ * @OA\JsonContent(
+ * type="array",
+ * @OA\Items(
+ * type="object",
+ * @OA\Property(property="id", type="integer", example=12),
+ * @OA\Property(property="name", type="string", example="Anel Test"),
+ * @OA\Property(property="price", type="number", format="float", example=0.99),
+ * @OA\Property(property="category_id", type="integer", example=1),
+ * @OA\Property(property="stock_quantity", type="integer", example=200),
+ * @OA\Property(property="description", type="string", example="Test"),
+ * @OA\Property(property="user_id", type="integer", example=1)
+ * )
+ * )
+ * ),
+ * @OA\Response(
+ * response=400,
+ * description="Invalid input or error retrieving products",
+ * @OA\JsonContent(
+ * type="object",
+ * @OA\Property(property="error", type="string", example="User not found or database error")
+ * )
+ * )
+ * )
+ */
+
+Flight::route('GET /products/users/@user_id', function ($user_id) {
+    try {
+        $product = Flight::product()->get_product_by_user($user_id);
+        Flight::json($product);
+    } catch (Exception $e) {
+        Flight::json(["error" => $e->getMessage()], 400);
+    }
+});
+
+
+
+
+
+
+
+
+/**
  * @OA\Put(
  *   path="/products/{id}",
  *   summary="Update an existing product",
@@ -272,6 +332,8 @@ Flight::route('POST /products', function () {
  */
 
 Flight::route('PUT /products/@id', function ($id) {
+    Flight::middleware()->verifyToken(Flight::request()->getHeader('auth'));
+
     $data = Flight::request()->data->getData();
     try {
         $existing = Flight::product()->get_product_by_id($id);
@@ -336,4 +398,36 @@ Flight::route('DELETE /products/@id', function ($id) {
     } catch (Exception $e) {
         Flight::json(["error" => $e->getMessage()], 400);
     }
+});
+
+
+
+Flight::route('POST /upload-image', function () {
+
+    if (!isset($_FILES['image'])) {
+        Flight::json(["error" => "No file uploaded"], 400);
+        return;
+    }
+
+    $file = $_FILES['image'];
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        Flight::json(["error" => "Upload error code: " . $file['error']], 400);
+        return;
+    }
+
+    $uploadsDir = __DIR__ . "/uploads";
+    if (!is_dir($uploadsDir)) {
+        mkdir($uploadsDir, 0775, true);
+    }
+
+    $fileName = time() . "_" . basename($file['name']);
+    $targetPath = $uploadsDir . "/" . $fileName;
+
+    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+        Flight::json(["error" => "Failed to move uploaded file"], 500);
+        return;
+    }
+
+    $imagePath = "uploads/" . $fileName;
+    Flight::json(["path" => $imagePath]);
 });

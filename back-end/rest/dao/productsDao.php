@@ -8,6 +8,12 @@ class ProductsDao extends BaseDao
         parent::__construct("products");
 
     }
+    public function get_product_by_user($user_id)
+    {
+        $query = "SELECT * FROM products WHERE user_id = :user_id";
+        $params = [':user_id' => $user_id];
+        return $this->query($query, $params);
+    }
     public function get_product_by_id($id)
     {
         $query = "SELECT * FROM products WHERE id = :id";
@@ -36,5 +42,7 @@ class ProductsDao extends BaseDao
 
 
 }
+
+
 
 ?>

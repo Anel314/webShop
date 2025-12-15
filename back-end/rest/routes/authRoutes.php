@@ -3,7 +3,7 @@
 // Get user by username
 /**
  * @OA\Get(
- *     path="/auth/username/{username}",
+ *     path="/username/{username}",
  *     summary="Get user by username",
  *     tags={"Authentication"},
  *     @OA\Parameter(
@@ -43,7 +43,7 @@
  *     )
  * )
  */
-Flight::route('GET /auth/username/@username', function ($username) {
+Flight::route('GET /username/@username', function ($username) {
     try {
         $user = Flight::auth()->get_user_by_username($username);
         if ($user) {
@@ -60,7 +60,7 @@ Flight::route('GET /auth/username/@username', function ($username) {
 // Get user by email
 /**
  * @OA\Get(
- *     path="/auth/email/{email}",
+ *     path="/email/{email}",
  *     summary="Get user by email",
  *     tags={"Authentication"},
  *     @OA\Parameter(
@@ -100,7 +100,7 @@ Flight::route('GET /auth/username/@username', function ($username) {
  *     )
  * )
  */
-Flight::route('GET /auth/email/@email', function ($email) {
+Flight::route('GET /email/@email', function ($email) {
     try {
         $user = Flight::auth()->get_user_by_email($email);
         if ($user) {
@@ -171,5 +171,68 @@ Flight::route('POST /login', function () {
         Flight::json(["error" => $e->getMessage()], 400);
     }
 });
+
+
+
+// Register user
+/**
+ * @OA\Post(
+ *     path="/register",
+ *     summary="Register a new user account",
+ *     tags={"Authentication"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"username", "email", "password", "first_name", "last_name", "address", "profile_image_url"},
+ *             @OA\Property(property="username", type="string", example="johndoe"),
+ *             @OA\Property(property="email", type="string", format="email", example="johndoe@example.com"),
+ *             @OA\Property(property="password", type="string", format="password", example="mySecurePass123"),
+ *             @OA\Property(property="first_name", type="string", example="John"),
+ *             @OA\Property(property="last_name", type="string", example="Doe"),
+ *             @OA\Property(property="address", type="string", example="123 Main Street, NY"),
+ *             @OA\Property(property="profile_image_url", type="string", example="https://example.com/images/profile.jpg")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Registration successful",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             example={
+ *                 "message": "Registration successful",
+ *                 "user": {
+ *                     "id": 123,
+ *                     "username": "johndoe",
+ *                     "email": "johndoe@example.com",
+ *                     "first_name": "John",
+ *                     "last_name": "Doe",
+ *                     "address": "123 Main Street, NY",
+ *                     "profile_image_url": "https://example.com/images/profile.jpg"
+ *                 }
+ *             }
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Invalid or missing registration data",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             example={"error": "Missing required fields or invalid data"}
+ *         )
+ *     )
+ * )
+ */
+
+Flight::route('POST /register', function () {
+    $data = Flight::request()->data->getData();
+
+    try {
+        $user = Flight::auth()->register($data);
+        Flight::json(["message" => "Registration successful", "user" => $user]);
+    } catch (Exception $e) {
+        Flight::json(["error" => $e->getMessage()], 400);
+    }
+});
+
 
 ?>

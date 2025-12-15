@@ -21,6 +21,7 @@ header.masthead > * {
   position: relative;
   z-index: 2;
 }
+
 header.masthead .masthead-subheading {
   font-size: 1.5rem;
   font-style: italic;
