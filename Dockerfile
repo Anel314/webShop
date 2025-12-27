@@ -1,24 +1,24 @@
 FROM php:8.2-apache
 
-# Disable all MPMs first
-RUN a2dismod mpm_event mpm_worker || true
+# Remove ALL MPM modules
+RUN rm -f /etc/apache2/mods-enabled/mpm_*
 
-# Enable prefork MPM
+# Explicitly enable prefork MPM
 RUN a2enmod mpm_prefork
 
-# Enable rewrite (Flight needs it)
+# Enable rewrite for Flight
 RUN a2enmod rewrite
 
-# Install PHP extensions
+# PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Copy project
-COPY . /var/www/html/
+# Copy app
+COPY . /var/www/html
 
-# Allow .htaccess overrides
-RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+# Allow .htaccess
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
-# Fix permissions
+# Permissions
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
