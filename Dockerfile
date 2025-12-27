@@ -1,33 +1,23 @@
-FROM php:8.2-apache
+FROM php:8.2-fpm
 
-# 1. PHP extensions
+# Install PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql
 
-# 2. ENABLE rewrite
-RUN a2enmod rewrite
+# Install nginx
+RUN apt-get update && apt-get install -y nginx
 
-# 3. ☢️ ABSOLUTE NUCLEAR MPM FIX ☢️
-# Remove ALL MPMs from EVERY possible location
-RUN rm -f \
-    /etc/apache2/mods-enabled/mpm_event.load \
-    /etc/apache2/mods-enabled/mpm_worker.load \
-    /etc/apache2/mods-enabled/mpm_prefork.load \
-    /etc/apache2/mods-available/mpm_event.load \
-    /etc/apache2/mods-available/mpm_worker.load
+# Copy nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Re-enable ONLY prefork
-RUN ln -s /etc/apache2/mods-available/mpm_prefork.load \
-          /etc/apache2/mods-enabled/mpm_prefork.load
-
-# 4. Railway PORT fix
-RUN sed -i 's/Listen 80/Listen ${PORT}/' /etc/apache2/ports.conf && \
-    sed -i 's/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/' \
-    /etc/apache2/sites-available/000-default.conf
-
-# 5. App files
+# Copy app
 COPY . /var/www/html
-RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf && \
-    chown -R www-data:www-data /var/www/html
+WORKDIR /var/www/html
 
-# 6. Start Apache
-CMD ["apache2-foreground"]
+# Permissions
+RUN chown -R www-data:www-data /var/www/html
+
+# Expose Railway port
+EXPOSE 8080
+
+# Start both services
+CMD php-fpm -D && nginx -g "daemon off;"
