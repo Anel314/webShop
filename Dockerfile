@@ -1,20 +1,24 @@
 FROM php:8.2-apache
 
-# 1. Install system dependencies & PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql
+# Remove ALL MPM modules
+RUN rm -f /etc/apache2/mods-enabled/mpm_*
 
-# 2. Enable rewrite for Flight
+# Explicitly enable prefork MPM
+RUN a2enmod mpm_prefork
+
+# Enable rewrite for Flight
 RUN a2enmod rewrite
 
-# 3. Allow .htaccess (Best practice: target the specific directory)
-RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
+# PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql
 
-# 4. Copy app files
+# Copy app
 COPY . /var/www/html
 
-# 5. Set permissions
+# Allow .htaccess
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
+
+# Permissions
 RUN chown -R www-data:www-data /var/www/html
 
-# Railway uses a dynamic PORT, so we don't hardcode 80 in the setup
-# but we keep EXPOSE for documentation.
 EXPOSE 80
