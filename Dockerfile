@@ -1,23 +1,21 @@
-FROM php:8.2-fpm
+FROM php:8.2-apache
+
+# Enable Apache rewrite (Flight needs this)
+RUN a2enmod rewrite
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Install nginx
-RUN apt-get update && apt-get install -y nginx
+# Set Apache document root
+ENV APACHE_DOCUMENT_ROOT /var/www/html
 
-# Copy nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy project
+COPY . /var/www/html/
 
-# Copy app
-COPY . /var/www/html
-WORKDIR /var/www/html
+# Allow .htaccess overrides
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html
 
-# Expose Railway port
-EXPOSE 8080
-
-# Start both services
-CMD php-fpm -D && nginx -g "daemon off;"
+EXPOSE 80
